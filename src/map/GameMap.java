@@ -8,13 +8,17 @@ import java.util.Random;
 public class GameMap {
     private PApplet p;
     private Room root;
-    private ArrayList<Room> rooms = new ArrayList();
+    private ArrayList<Room> rooms = new ArrayList<>();
     private ArrayList<Room> toInspect = new ArrayList<>();
 
     public GameMap(PApplet p) {
         this.p = p;
     }
 
+    /**
+     * Map tree built recursively in breadth-first order until certain depth has been reached.
+     * @param room Room to have children added.
+     */
     public void buildMap(Room room) {
         if (room.getY() < 750) {
             int childCount;
@@ -25,6 +29,12 @@ public class GameMap {
                 rooms.add(room);
                 toInspect.add(room);
                 childCount = 3;
+            } else if (room.getY() == 690) {
+                if (room.getBranch() != 1) {
+                    childCount = 2;
+                } else {
+                    childCount = 3;
+                }
             } else {
                 if (room.getBranch() != 1) {
                     childCount = r.nextInt(2) + 1;
@@ -39,7 +49,16 @@ public class GameMap {
                 Room newChild;
                 switch (room.getBranch()) {
                     case 0:
-                        newChild = new Room(p, "Rest", (room.getX() + i*200), room.getY()+80, i);
+                        if (childCount == 2) {
+                            newChild = new Room(p, "Rest", (room.getX() + i * 200), room.getY() + 80, i);
+                        } else {
+                            int coinFlip = r.nextInt(2);
+                            if (coinFlip == 0) {
+                                newChild = new Room(p, "Rest", room.getX(), room.getY() + 80, 0);
+                            } else {
+                                newChild = new Room(p, "Rest", (room.getX() + 200), room.getY() + 80, 1);
+                            }
+                        }
                         break;
                     case 1:
                         if (childCount == 3) {
@@ -60,7 +79,13 @@ public class GameMap {
                         if (childCount == 2) {
                             newChild = new Room(p,"Rest", ((room.getX() - 200) + i*200), room.getY()+80, i+1);
                         } else {
-                            newChild = new Room(p, "Rest", room.getX(), room.getY()+80, 2);
+                            int coinFlip = r.nextInt(2);
+
+                            if (coinFlip == 0) {
+                                newChild = new Room(p, "Rest", room.getX(), room.getY() + 80, 2);
+                            } else {
+                                newChild = new Room(p, "Rest", room.getX() - 200, room.getY() + 80, 1);
+                            }
                         }
                         break;
                     default:
@@ -94,26 +119,8 @@ public class GameMap {
         return -1;
     }
 
-    public Room getRoot() {
-        return root;
-    }
-
     public void drawMap() {
         p.textSize(30);
-//        p.text(room.getName(), room.getX(), room.getY());
-//
-//        if (parent != null) {
-//            p.line(parent.getX() + 30, parent.getY() + 5, room.getX() + 30, room.getY() - 30);
-//        }
-//
-//        int childCount = room.getChildren().size();
-//
-//        if (childCount > 0) {
-//            for (int i = 0; i < childCount; i++) {
-//                drawMap(room.getChildren().get(i), room);
-//            }
-//        }
-
 
         for (int i = 0; i < rooms.size(); i++) {
             Room currentRoom = rooms.get(i);
