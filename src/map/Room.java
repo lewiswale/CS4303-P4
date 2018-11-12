@@ -11,6 +11,9 @@ public class Room {
     private double x, y;
     private int branch;
     private ArrayList<Room> parents = new ArrayList<>();
+    private final int WIDTH = 75;
+    private final int HEIGHT = 30;
+    private boolean selected = false;
 
     public Room(PApplet p, String name, double x, double y, int branch) {
         this.p = p;
@@ -46,5 +49,21 @@ public class Room {
 
     public ArrayList<Room> getParents() {
         return parents;
+    }
+
+    public int getWIDTH() {
+        return WIDTH;
+    }
+
+    public int getHEIGHT() {
+        return HEIGHT;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 }

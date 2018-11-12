@@ -119,13 +119,40 @@ public class GameMap {
         return -1;
     }
 
+    public boolean validRoomClicked() {
+        for (int i = 0; i < rooms.size(); i++) {
+            Room current = rooms.get(i);
+
+            if (current.isSelected()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public void drawMap() {
         p.textSize(30);
 
         for (int i = 0; i < rooms.size(); i++) {
             Room currentRoom = rooms.get(i);
 
+            if (p.mouseX > currentRoom.getX() && p.mouseX < (currentRoom.getX() + currentRoom.getWIDTH())
+            && p.mouseY > (currentRoom.getY() - currentRoom.getHEIGHT()) && p.mouseY < currentRoom.getY()) {
+                if (!currentRoom.isSelected()) {
+                    currentRoom.setSelected(true);
+                }
+            } else {
+                currentRoom.setSelected(false);
+            }
+
+            if (currentRoom.isSelected()) {
+                p.fill(255, 255, 0);
+            }
+
             p.text(currentRoom.getName(), currentRoom.getX(), currentRoom.getY());
+            p.fill(0);
+
             if (currentRoom.getParents().size() > 0) {
                 for (int j = 0; j < currentRoom.getParents().size(); j++) {
                     Room currentParent = currentRoom.getParents().get(j);
