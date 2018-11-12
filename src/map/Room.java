@@ -14,6 +14,7 @@ public class Room {
     private final int WIDTH = 75;
     private final int HEIGHT = 30;
     private boolean selected = false;
+    private boolean isReachable = true;
 
     public Room(PApplet p, String name, double x, double y, int branch) {
         this.p = p;
@@ -65,5 +66,17 @@ public class Room {
 
     public void setSelected(boolean selected) {
         this.selected = selected;
+    }
+
+    public boolean isBottom() {
+        return children.size() == 0;
+    }
+
+    public boolean isReachable() {
+        return isReachable;
+    }
+
+    public void setReachable(boolean reachable) {
+        isReachable = reachable;
     }
 }

@@ -1,10 +1,8 @@
 import map.GameMap;
-import map.Room;
 import processing.core.PApplet;
 
 public class MainSketch extends PApplet {
     private GameMap map;
-    private Room root;
     private boolean[] keys = new boolean[128];
     private boolean showingMap, roomSelected;
 
@@ -13,8 +11,6 @@ public class MainSketch extends PApplet {
         showingMap = true;
         roomSelected = false;
         map = new GameMap(this);
-        root = new Room(this, "Boss", 700, 50, 1);
-        map.buildMap(root);
     }
 
     public void draw() {
@@ -30,7 +26,6 @@ public class MainSketch extends PApplet {
             showingMap = true;
             roomSelected = false;
             map = new GameMap(this);
-            map.buildMap(root);
         }
     }
 
@@ -40,10 +35,7 @@ public class MainSketch extends PApplet {
 
     public void mouseClicked() {
         if (showingMap) {
-            if (map.validRoomClicked()) {
-                showingMap = false;
-                roomSelected = true;
-            }
+            map.validRoomClicked();
         }
     }
 

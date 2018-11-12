@@ -10,9 +10,19 @@ public class GameMap {
     private Room root;
     private ArrayList<Room> rooms = new ArrayList<>();
     private ArrayList<Room> toInspect = new ArrayList<>();
+    private ArrayList<Integer> reachableRooms = new ArrayList<>();
+    public ArrayList<Room> nextRooms = new ArrayList<>();
+    private int roomSelected = -1;
 
     public GameMap(PApplet p) {
         this.p = p;
+        root = new Room(p, "Boss", 700, 50, 1);
+        buildMap(root);
+        for (int i = 0; i < rooms.size(); i++) {
+            if (rooms.get(i).isBottom()) {
+                nextRooms.add(rooms.get(i));
+            }
+        }
     }
 
     /**
@@ -45,46 +55,48 @@ public class GameMap {
 
             toInspect.remove(0);
 
+            String roomName = "Fight";
+
             for (int i = 0; i < childCount; i++) {
                 Room newChild;
                 switch (room.getBranch()) {
                     case 0:
                         if (childCount == 2) {
-                            newChild = new Room(p, "Rest", (room.getX() + i * 200), room.getY() + 80, i);
+                            newChild = new Room(p, roomName, (room.getX() + i * 200), room.getY() + 80, i);
                         } else {
                             int coinFlip = r.nextInt(2);
                             if (coinFlip == 0) {
-                                newChild = new Room(p, "Rest", room.getX(), room.getY() + 80, 0);
+                                newChild = new Room(p, roomName, room.getX(), room.getY() + 80, 0);
                             } else {
-                                newChild = new Room(p, "Rest", (room.getX() + 200), room.getY() + 80, 1);
+                                newChild = new Room(p, roomName, (room.getX() + 200), room.getY() + 80, 1);
                             }
                         }
                         break;
                     case 1:
                         if (childCount == 3) {
-                            newChild = new Room(p,"Rest", ((room.getX() - 200) + i*200), room.getY()+80, i);
+                            newChild = new Room(p,roomName, ((room.getX() - 200) + i*200), room.getY()+80, i);
                         } else if (childCount == 2){
                             int coinFlip = r.nextInt(2);
 
                             if (coinFlip == 0) {
-                                newChild = new Room(p,"Rest", ((room.getX() - 200) + i*200), room.getY()+80, i);
+                                newChild = new Room(p,roomName, ((room.getX() - 200) + i*200), room.getY()+80, i);
                             } else {
-                                newChild = new Room(p,"Rest", (room.getX() + i*200), room.getY()+80, i+1);
+                                newChild = new Room(p,roomName, (room.getX() + i*200), room.getY()+80, i+1);
                             }
                         } else {
-                            newChild = new Room(p, "Rest", room.getX(), room.getY()+80, 1);
+                            newChild = new Room(p, roomName, room.getX(), room.getY()+80, 1);
                         }
                         break;
                     case 2:
                         if (childCount == 2) {
-                            newChild = new Room(p,"Rest", ((room.getX() - 200) + i*200), room.getY()+80, i+1);
+                            newChild = new Room(p,roomName, ((room.getX() - 200) + i*200), room.getY()+80, i+1);
                         } else {
                             int coinFlip = r.nextInt(2);
 
                             if (coinFlip == 0) {
-                                newChild = new Room(p, "Rest", room.getX(), room.getY() + 80, 2);
+                                newChild = new Room(p, roomName, room.getX(), room.getY() + 80, 2);
                             } else {
-                                newChild = new Room(p, "Rest", room.getX() - 200, room.getY() + 80, 1);
+                                newChild = new Room(p, roomName, room.getX() - 200, room.getY() + 80, 1);
                             }
                         }
                         break;
@@ -119,16 +131,62 @@ public class GameMap {
         return -1;
     }
 
-    public boolean validRoomClicked() {
-        for (int i = 0; i < rooms.size(); i++) {
-            Room current = rooms.get(i);
+    public void validRoomClicked() {
+        for (int i = 0; i < nextRooms.size(); i++) {
+            Room current = nextRooms.get(i);
 
-            if (current.isSelected()) {
-                return true;
+            if (current.isSelected()) { //Will probably need to check reachability later
+                reachableRooms = new ArrayList<>();
+                nextRooms = new ArrayList<>();
+                roomSelected = rooms.indexOf(current);
+                reachableRooms.add(roomSelected);
+                getReachableRooms(roomSelected);
+                setReachability();
+            }
+
+        }
+    }
+
+    public void setReachability() {
+        for (int i = 0; i < rooms.size(); i++) {
+            if (!reachableRooms.contains(i)) {
+                rooms.get(i).setReachable(false);
             }
         }
+    }
 
-        return false;
+    public void getReachableRooms(int n) {
+        Room selected = rooms.get(n);
+        reachableRooms.add(n);
+
+        ArrayList<Room> parents = selected.getParents();
+
+        if (parents.size() != 0) {
+            ArrayList<Integer> toVisit = new ArrayList<>();
+
+            for (int i = 0; i < parents.size(); i++) {
+                if (n == roomSelected) {
+                    nextRooms.add(parents.get(i));
+                }
+
+                for (int j = 0; j < rooms.size(); j++) {
+                    Room room = rooms.get(j);
+
+                    if (room.getX() == parents.get(i).getX() && room.getY() == parents.get(i).getY()) {
+                        toVisit.add(j);
+                        break;
+                    }
+                }
+            }
+
+            for (int i = 0; i < toVisit.size(); i++) {
+                int roomToVisit = toVisit.get(i);
+
+                if (!reachableRooms.contains(roomToVisit)) {
+                    getReachableRooms(roomToVisit);
+                }
+            }
+        }
     }
 
     public void drawMap() {
@@ -153,12 +211,38 @@ public class GameMap {
             p.text(currentRoom.getName(), currentRoom.getX(), currentRoom.getY());
             p.fill(0);
 
+            if (roomSelected == -1) {
+                if (currentRoom.isBottom()) {
+                    p.noFill();
+                    p.stroke(0, 255, 0);
+                    p.strokeWeight(5);
+                    p.rect(currentRoom.getX(), (currentRoom.getY() - currentRoom.getHEIGHT()) + 3, currentRoom.getWIDTH(),
+                            currentRoom.getHEIGHT() + 5);
+                    p.fill(0);
+                    p.stroke(0);
+                    p.strokeWeight(1);
+                }
+            } else {
+                for (int j = 0; j < nextRooms.size(); j++) {
+                    p.noFill();
+                    p.stroke(0, 255, 0);
+                    p.strokeWeight(5);
+                    p.rect(nextRooms.get(j).getX(), (nextRooms.get(j).getY() - nextRooms.get(j).getHEIGHT()) + 3, nextRooms.get(j).getWIDTH(),
+                            nextRooms.get(j).getHEIGHT() + 5);
+                    p.fill(0);
+                    p.stroke(0);
+                    p.strokeWeight(1);
+                }
+            }
+
             if (currentRoom.getParents().size() > 0) {
                 for (int j = 0; j < currentRoom.getParents().size(); j++) {
                     Room currentParent = currentRoom.getParents().get(j);
 
-                    p.line(currentParent.getX() + 30, currentParent.getY() + 5, currentRoom.getX() + 30,
-                            currentRoom.getY() - 30);
+                    if (currentParent.isReachable() && currentRoom.isReachable()) {
+                        p.line(currentParent.getX() + 30, currentParent.getY() + 5, currentRoom.getX() + 30,
+                                currentRoom.getY() - 30);
+                    }
                 }
             }
         }
