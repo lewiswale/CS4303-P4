@@ -1,22 +1,32 @@
+import combat.CombatEngine;
 import map.GameMap;
+import player.Player;
 import processing.core.PApplet;
 
 public class MainSketch extends PApplet {
     private GameMap map;
     private boolean[] keys = new boolean[128];
-    private boolean showingMap, roomSelected;
+    private boolean showingMap, roomSelected, fightSelected;
+    private Player player;
+    private CombatEngine ce;
 
     public void settings() {
         size(1600, 900);
         showingMap = true;
         roomSelected = false;
-        map = new GameMap(this);
+        player = new Player(this);
+        ce = new CombatEngine(this, player);
+        map = new GameMap(this, player, 1);
     }
 
     public void draw() {
         background(128);
         if (!roomSelected) {
             map.drawMap();
+        } else {
+            if (fightSelected) {
+                ce.displayCombat();
+            }
         }
     }
 
@@ -25,7 +35,8 @@ public class MainSketch extends PApplet {
         if (keys['r']) {
             showingMap = true;
             roomSelected = false;
-            map = new GameMap(this);
+            fightSelected = false;
+            map = new GameMap(this, player, 1);
         }
     }
 
@@ -35,7 +46,11 @@ public class MainSketch extends PApplet {
 
     public void mouseClicked() {
         if (showingMap) {
-            map.validRoomClicked();
+            String room = map.validRoomClicked();
+            if (room.equals("Fight")) {
+                roomSelected = true;
+                fightSelected = true;
+            }
         }
     }
 

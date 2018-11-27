@@ -1,5 +1,6 @@
 package map;
 
+import player.Player;
 import processing.core.PApplet;
 
 import java.util.ArrayList;
@@ -13,9 +14,13 @@ public class GameMap {
     private ArrayList<Integer> reachableRooms = new ArrayList<>();
     public ArrayList<Room> nextRooms = new ArrayList<>();
     private int roomSelected = -1;
+    private Player player;
+    private int floorNumber;
 
-    public GameMap(PApplet p) {
+    public GameMap(PApplet p, Player player, int floorNumber) {
         this.p = p;
+        this.player = player;
+        this.floorNumber = floorNumber;
         root = new Room(p, "Boss", 700, 50, 1);
         buildMap(root);
         for (int i = 0; i < rooms.size(); i++) {
@@ -131,7 +136,7 @@ public class GameMap {
         return -1;
     }
 
-    public void validRoomClicked() {
+    public String validRoomClicked() {
         for (int i = 0; i < nextRooms.size(); i++) {
             Room current = nextRooms.get(i);
 
@@ -142,9 +147,12 @@ public class GameMap {
                 reachableRooms.add(roomSelected);
                 getReachableRooms(roomSelected);
                 setReachability();
+                return current.getName();
             }
 
         }
+
+        return "";
     }
 
     public void setReachability() {
