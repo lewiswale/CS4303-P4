@@ -1,3 +1,5 @@
+import cards.Card;
+import cards.CardSelectionScreen;
 import combat.CombatEngine;
 import map.GameMap;
 import player.Player;
@@ -6,16 +8,18 @@ import processing.core.PApplet;
 public class MainSketch extends PApplet {
     private GameMap map;
     private boolean[] keys = new boolean[128];
-    private boolean showingMap, roomSelected, fightSelected, cardClicked;
+    private boolean showingMap, roomSelected, fightSelected, cardClicked, showRewardScreen;
     private Player player;
     private CombatEngine ce;
+    private CardSelectionScreen rew;
 
     public void settings() {
         size(1600, 900);
         showingMap = true;
         roomSelected = false;
         player = new Player(this);
-        ce = new CombatEngine(this, player);
+        rew = new CardSelectionScreen(this);
+        ce = new CombatEngine(this, player, rew);
         map = new GameMap(this, player, 1);
     }
 
@@ -25,7 +29,12 @@ public class MainSketch extends PApplet {
             map.drawMap();
         } else {
             if (fightSelected) {
-                ce.displayCombat();
+                if (!ce.isFinished())
+                    ce.displayCombat();
+                else {
+                    showRewardScreen = true;
+                    rew.displayRewardScreen();
+                }
             }
         }
     }
@@ -51,12 +60,25 @@ public class MainSketch extends PApplet {
                 showingMap = false;
                 roomSelected = true;
                 fightSelected = true;
+                player.resetDeck();
+                ce = new CombatEngine(this, player, rew);
             }
         } else {
             if (fightSelected) {
-                cardClicked = ce.cardSelected();
-                if (!cardClicked) {
-                    ce.endPressed();
+                if (!showRewardScreen) {
+                    cardClicked = ce.cardSelected();
+                    if (!cardClicked) {
+                        ce.endPressed();
+                    }
+                } else {
+                    Card cardToAdd = rew.getSelection();
+                    if (cardToAdd != null) {
+                        player.addCardToDeck(cardToAdd);
+                        showRewardScreen = false;
+                        fightSelected = false;
+                        roomSelected = false;
+                        showingMap = true;
+                    }
                 }
             }
         }

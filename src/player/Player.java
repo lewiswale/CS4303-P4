@@ -10,14 +10,14 @@ import java.util.Random;
 
 public class Player {
     private PApplet p;
-    private int health, energy, block;
+    private int health, energy, block, strength, dex;
     private ArrayList<Card> deck;
     private ArrayList<Card> hand;
     private ArrayList<Card> discarded;
     private int cardsDrawn = 0;
     private int amountOfCards;
     private float x, y;
-    private int width, height;
+    private int width, height, rad;
 
     public Player(PApplet p) {
         this.p = p;
@@ -28,6 +28,7 @@ public class Player {
         this.y = 300;
         this.width = 100;
         this.height = 100;
+        this.rad = width/2;
         this.deck = new ArrayList<>();
         this.deck.add(new Attack(p));
         this.deck.add(new Attack(p));
@@ -101,7 +102,7 @@ public class Player {
         float y1 = y - p.mouseY;
         y1 *= y1;
 
-        return (width/2) * (width/2) >= x1 + y1;
+        return rad * rad >= x1 + y1;
     }
 
     public void discard(Card card) {
@@ -121,8 +122,53 @@ public class Player {
         this.health = health;
     }
 
+    public int getEnergy() {
+        return energy;
+    }
+
+    public void setEnergy(int energy) {
+        this.energy = energy;
+    }
+
     public void setBlock(int block) {
         this.block = block;
+    }
+
+    public boolean isDead() {
+        return health <= 0;
+    }
+
+    public int getStrength() {
+        return strength;
+    }
+
+    public void setStrength(int strength) {
+        this.strength = strength;
+    }
+
+    public void resetDeck() {
+        int size = hand.size();
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
+                discarded.add(hand.get(0));
+                hand.remove(0);
+            }
+        }
+
+        size = discarded.size();
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
+                deck.add(discarded.get(0));
+                discarded.remove(0);
+            }
+        }
+
+        shuffleIntoDeck(deck);
+        energy = 3;
+    }
+
+    public void addCardToDeck(Card card) {
+        deck.add(card);
     }
 
     public void drawPlayer() {
@@ -133,5 +179,18 @@ public class Player {
         p.ellipse(x, y, width, height);
         p.fill(0);
         p.stroke(0);
+        p.textSize(20);
+        int yOffset = (int) (y + rad + 25);
+        p.text("Health: " + health, x - rad, yOffset);
+        p.text("Energy: " + energy, x - rad, yOffset + 25);
+        int abilityOffset = yOffset + 50;
+        if (block > 0) {
+            p.text("Block: " + block, x - rad, abilityOffset);
+            abilityOffset += 25;
+        }
+        if (strength > 0) {
+            p.text("Strength: +" + strength + " dmg", x - rad, abilityOffset);
+            abilityOffset += 25;
+        }
     }
 }

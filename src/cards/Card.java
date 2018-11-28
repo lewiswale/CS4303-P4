@@ -1,5 +1,6 @@
 package cards;
 
+import com.sun.xml.internal.messaging.saaj.soap.impl.HeaderElementImpl;
 import combat.Target;
 import enemies.Enemy;
 import player.Player;
@@ -50,8 +51,16 @@ public class Card {
         return y;
     }
 
+    public int getCost() {
+        return cost;
+    }
+
     public boolean isDoNotMove() {
         return doNotMove;
+    }
+
+    public boolean mouseIsOver() {
+        return p.mouseX > x && p.mouseX < x + CARD_WIDTH && p.mouseY > y && p.mouseY < y + CARD_HEIGHT;
     }
 
     public void setDoNotMove(boolean doNotMove) {
@@ -72,5 +81,11 @@ public class Card {
         p.fill(0);
         p.textSize(30);
         p.text(name, x + 10, y + 35);
+        p.fill(255);
+        p.ellipse(x + CARD_WIDTH, y, 50, 50);
+        p.fill(0);
+        p.textSize(20);
+        p.text(cost, x + CARD_WIDTH - 10, y + 10);
+        p.text(flavourText, x + 10, y + 150);
     }
 }

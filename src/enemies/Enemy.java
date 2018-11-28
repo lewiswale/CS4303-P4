@@ -42,6 +42,10 @@ public class Enemy {
         return p.mouseX > x && p.mouseX < x + width && p.mouseY > y && p.mouseY < y + height;
     }
 
+    public boolean isDead() {
+        return health <= 0;
+    }
+
     public void drawEnemy() {
         p.fill(255, 0, 0);
         if (isMouseOver()) {

@@ -1,6 +1,7 @@
 package combat;
 
 import cards.Card;
+import cards.CardSelectionScreen;
 import enemies.Enemy;
 import enemies.SmallSquare;
 import player.Player;
@@ -15,14 +16,17 @@ public class CombatEngine {
     private boolean cardClicked;
     private Card selectedCard;
     private EndTurnButton endTurnButton;
+    private CardSelectionScreen rew;
 
-    public CombatEngine(PApplet p, Player player) {
+    public CombatEngine(PApplet p, Player player, CardSelectionScreen rew) {
         this.p = p;
         this.player = player;
         player.drawHand();
         this.enemies = new ArrayList<>();
         this.enemies.add(new SmallSquare(p, 800, 250));
+//        this.enemies.add(new SmallSquare(p, 1300, 400));
         this.endTurnButton = new EndTurnButton(p);
+        this.rew = rew;
     }
 
     public boolean cardSelected() {
@@ -40,6 +44,7 @@ public class CombatEngine {
 
     public void endPressed() {
         if (endTurnButton.isMouseOver()) {
+            player.setEnergy(3);
             player.drawHand();
         }
     }
@@ -66,8 +71,10 @@ public class CombatEngine {
     public boolean checkEnemies() {
         for (Enemy enemy : enemies) {
             if (enemy.isMouseOver()) {
-                selectedCard.activateCard(enemy);
-                return true;
+                if (playerHasEnergy()) {
+                    selectedCard.activateCard(enemy);
+                    return true;
+                }
             }
         }
         return false;
@@ -75,7 +82,17 @@ public class CombatEngine {
 
     public boolean checkPlayer() {
         if (player.isMouseOverPlayer()) {
-            selectedCard.activateCard(player);
+            if (playerHasEnergy()) {
+                selectedCard.activateCard(player);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean playerHasEnergy() {
+        if (player.getEnergy() >= selectedCard.getCost()) {
+            player.setEnergy(player.getEnergy() - selectedCard.getCost());
             return true;
         }
         return false;
@@ -95,11 +112,24 @@ public class CombatEngine {
         }
     }
 
+    public boolean isFinished() {
+        if (player.isDead()) {
+            return true;
+        } else {
+            for (Enemy enemy : enemies) {
+                if (!enemy.isDead())
+                        return false;
+            }
+            rew.generateRewards();
+            return true;
+        }
+    }
+
     public void displayCombat() {
         player.drawPlayer();
-        for (Enemy enemy :
-                enemies) {
-            enemy.drawEnemy();
+        for (Enemy enemy : enemies) {
+            if (!enemy.isDead())
+                enemy.drawEnemy();
         }
 
         int x = 300;

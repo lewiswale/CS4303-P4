@@ -6,7 +6,7 @@ public class SmallSquare extends Enemy {
 
     public SmallSquare(PApplet p, int x, int y) {
         super(p, x, y);
-        health = 100;
+        health = 10;
         height = 50;
         width = 50;
     }
