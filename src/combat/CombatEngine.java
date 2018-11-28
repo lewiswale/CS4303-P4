@@ -14,18 +14,19 @@ public class CombatEngine {
     private ArrayList<Enemy> enemies;
     private boolean cardClicked;
     private Card selectedCard;
-
+    private EndTurnButton endTurnButton;
 
     public CombatEngine(PApplet p, Player player) {
         this.p = p;
         this.player = player;
+        player.drawHand();
         this.enemies = new ArrayList<>();
         this.enemies.add(new SmallSquare(p, 800, 250));
+        this.endTurnButton = new EndTurnButton(p);
     }
 
     public boolean cardSelected() {
-        for (Card card :
-                player.getDeck()) {
+        for (Card card : player.getHand()) {
             if (card.isMouseIsOver()) {
                 cardClicked = true;
                 card.setDoNotMove(true);
@@ -37,11 +38,56 @@ public class CombatEngine {
         return false;
     }
 
-    public void released() {
-        for (Card card :
-                player.getDeck()) {
+    public void endPressed() {
+        if (endTurnButton.isMouseOver()) {
+            player.drawHand();
+        }
+    }
+
+    public void getTarget() {
+        switch (selectedCard.getCanTarget()) {
+            case ENEMIES:
+                if (checkEnemies()) {
+                    released(true);
+                } else {
+                    released(false);
+                }
+                break;
+            case PLAYER:
+                if (checkPlayer()) {
+                    released(true);
+                } else {
+                    released(false);
+                }
+                break;
+        }
+    }
+
+    public boolean checkEnemies() {
+        for (Enemy enemy : enemies) {
+            if (enemy.isMouseOver()) {
+                selectedCard.activateCard(enemy);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean checkPlayer() {
+        if (player.isMouseOverPlayer()) {
+            selectedCard.activateCard(player);
+            return true;
+        }
+        return false;
+    }
+
+    public void released(boolean validTarget) {
+        for (Card card : player.getHand()) {
             if (card.getX() == selectedCard.getX()) {
                 card.setDoNotMove(false);
+                if (validTarget) {
+                    player.discard(card);
+                }
                 selectedCard = null;
                 cardClicked = false;
                 break;
@@ -58,8 +104,7 @@ public class CombatEngine {
 
         int x = 300;
         int y = 750;
-        for (Card card :
-                player.getDeck()) {
+        for (Card card : player.getHand()) {
             if (p.mouseX > x && p.mouseX < x + card.getCARD_WIDTH() && p.mouseY > y && p.mouseY < y + card.getCARD_HEIGHT()) {
                 card.setXY(x, y - 150);
                 card.drawCard();
@@ -79,5 +124,7 @@ public class CombatEngine {
             p.fill(0);
             p.line(cardMidX, cardMidY, p.mouseX, p.mouseY);
         }
+
+        endTurnButton.drawEndTurn();
     }
 }

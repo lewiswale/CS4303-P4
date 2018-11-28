@@ -55,6 +55,9 @@ public class MainSketch extends PApplet {
         } else {
             if (fightSelected) {
                 cardClicked = ce.cardSelected();
+                if (!cardClicked) {
+                    ce.endPressed();
+                }
             }
         }
     }
@@ -62,7 +65,7 @@ public class MainSketch extends PApplet {
     public void mouseReleased() {
         if (fightSelected) {
             if (cardClicked) {
-                ce.released();
+                ce.getTarget();
                 cardClicked = false;
             }
         }

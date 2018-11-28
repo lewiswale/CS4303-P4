@@ -1,5 +1,8 @@
 package cards;
 
+import combat.Target;
+import enemies.Enemy;
+import player.Player;
 import processing.core.PApplet;
 
 public class Card {
@@ -12,6 +15,7 @@ public class Card {
     boolean mouseIsOver = false;
     boolean doNotMove = false;
     int x, y;
+    Target canTarget;
 
     public Card(PApplet p) {
         this.p = p;
@@ -52,6 +56,14 @@ public class Card {
 
     public void setDoNotMove(boolean doNotMove) {
         this.doNotMove = doNotMove;
+    }
+
+    public void activateCard(Player player) {}
+
+    public void activateCard(Enemy enemy) {}
+
+    public Target getCanTarget() {
+        return canTarget;
     }
 
     public void drawCard() {
