@@ -6,7 +6,7 @@ import processing.core.PApplet;
 public class MainSketch extends PApplet {
     private GameMap map;
     private boolean[] keys = new boolean[128];
-    private boolean showingMap, roomSelected, fightSelected;
+    private boolean showingMap, roomSelected, fightSelected, cardClicked;
     private Player player;
     private CombatEngine ce;
 
@@ -44,12 +44,26 @@ public class MainSketch extends PApplet {
         keys[key] = false;
     }
 
-    public void mouseClicked() {
+    public void mousePressed() {
         if (showingMap) {
             String room = map.validRoomClicked();
             if (room.equals("Fight")) {
+                showingMap = false;
                 roomSelected = true;
                 fightSelected = true;
+            }
+        } else {
+            if (fightSelected) {
+                cardClicked = ce.cardSelected();
+            }
+        }
+    }
+
+    public void mouseReleased() {
+        if (fightSelected) {
+            if (cardClicked) {
+                ce.released();
+                cardClicked = false;
             }
         }
     }
