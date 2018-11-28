@@ -10,7 +10,7 @@ import java.util.Random;
 
 public class Player {
     private PApplet p;
-    private int health, energy, block, strength, debuff;
+    private int health, energy, block, strength, dexterity;
     private ArrayList<Card> deck;
     private ArrayList<Card> hand;
     private ArrayList<Card> discarded;
@@ -165,6 +165,14 @@ public class Player {
         this.strength = strength;
     }
 
+    public void setDexterity(int dexterity) {
+        this.dexterity = dexterity;
+    }
+
+    public int getDexterity() {
+        return dexterity;
+    }
+
     public void resetDeck() {
         int size = hand.size();
         if (size > 0) {
@@ -190,6 +198,14 @@ public class Player {
         deck.add(card);
     }
 
+    public void drawCard() {
+        if (deck.size() ==0) {
+            shuffleIntoDeck(discarded);
+        }
+        hand.add(deck.get(0));
+        deck.remove(0);
+    }
+
     public void drawPlayer() {
         p.fill(0, 255, 0);
         if (isMouseOverPlayer()) {
@@ -212,6 +228,13 @@ public class Player {
             abilityOffset += 25;
         } else if (strength < 0) {
             p.text("Strength: " + strength + " dmg", x - rad, abilityOffset);
+            abilityOffset += 25;
+        }
+        if (dexterity > 0) {
+            p.text("Dexterity: +" + dexterity + " blk", x - rad, abilityOffset);
+            abilityOffset += 25;
+        } else if (dexterity < 0) {
+            p.text("Dexterity: " + dexterity + " blk", x - rad, abilityOffset);
             abilityOffset += 25;
         }
     }

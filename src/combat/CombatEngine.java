@@ -58,7 +58,7 @@ public class CombatEngine {
     public void getTarget() {
         switch (selectedCard.getCanTarget()) {
             case ENEMIES:
-                if (checkEnemies()) {
+                if (checkEnemies(false)) {
                     released(true);
                 } else {
                     released(false);
@@ -71,15 +71,27 @@ public class CombatEngine {
                     released(false);
                 }
                 break;
+            case ALL_ENEMIES:
+                if (checkEnemies(true)) {
+                    released(true);
+                } else {
+                    released(false);
+                }
+                break;
         }
     }
 
-    public boolean checkEnemies() {
+    public boolean checkEnemies(boolean all) {
         for (Enemy enemy : enemies) {
             if (enemy.isMouseOver()) {
                 if (playerHasEnergy()) {
-                    selectedCard.activateCard(enemy, player);
-                    return true;
+                    if (!all) {
+                        selectedCard.activateCard(enemy, player);
+                        return true;
+                    } else {
+                        selectedCard.activateCard(enemies, player);
+                        return true;
+                    }
                 }
             }
         }
@@ -140,19 +152,25 @@ public class CombatEngine {
 
         int x = 300;
         int y = 750;
+        boolean onCard = false;
+        Card cardOnTop = null;
         for (Card card : player.getHand()) {
-            if (p.mouseX > x && p.mouseX < x + card.getCARD_WIDTH() && p.mouseY > y && p.mouseY < y + card.getCARD_HEIGHT()) {
+            if (card.mouseIsOver() && !onCard) {
                 card.setXY(x, y - 150);
-                card.drawCard();
                 card.setMouseIsOver(true);
+                cardOnTop = card;
+                onCard = true;
             } else {
                 if (!card.isDoNotMove())
                     card.setXY(x, y);
                 card.drawCard();
                 card.setMouseIsOver(false);
             }
-            x += 200;
+            x += 1000/player.getHand().size();
         }
+
+        if (cardOnTop != null)
+            cardOnTop.drawCard();
 
         if (cardClicked) {
             float cardMidX = selectedCard.getX() + selectedCard.getCARD_WIDTH()/2;

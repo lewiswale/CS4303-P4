@@ -6,6 +6,8 @@ import enemies.Enemy;
 import player.Player;
 import processing.core.PApplet;
 
+import java.util.ArrayList;
+
 public class Card {
     PApplet p;
     String name;
@@ -70,6 +72,8 @@ public class Card {
     public void activateCard(Player player) {}
 
     public void activateCard(Enemy enemy, Player player) {}
+
+    public void activateCard(ArrayList<Enemy> enemies, Player player) {}
 
     public Target getCanTarget() {
         return canTarget;

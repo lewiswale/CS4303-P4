@@ -16,8 +16,8 @@ public class CardSelectionScreen {
     public void generateRewards() {
         cardsToShow = new ArrayList<>();
         cardsToShow.add(new Strength(p));
-        cardsToShow.add(new Attack(p));
-        cardsToShow.add(new Block(p));
+        cardsToShow.add(new Dexterity(p));
+        cardsToShow.add(new Foresight(p));
     }
 
     public Card getSelection() {

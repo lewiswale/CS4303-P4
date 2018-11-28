@@ -12,7 +12,7 @@ public class Strength extends Card {
         this.name = "Strength";
         this.flavourText = "Gain 2 strength";
         this.canTarget = Target.PLAYER;
-        this.cost = 1;
+        this.cost = 2;
         this.strength = 2;
     }
 

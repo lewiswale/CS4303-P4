@@ -17,6 +17,6 @@ public class Block extends Card {
     }
 
     public void activateCard(Player player) {
-        player.setBlock(player.getBlock() + block);
+        player.setBlock(player.getBlock() + player.getDexterity() + block);
     }
 }
