@@ -24,7 +24,7 @@ public class CombatEngine {
         player.drawHand();
         this.enemies = new ArrayList<>();
         this.enemies.add(new SmallSquare(p, 800, 250));
-//        this.enemies.add(new SmallSquare(p, 1300, 400));
+        this.enemies.add(new SmallSquare(p, 1300, 400));
         this.endTurnButton = new EndTurnButton(p);
         this.rew = rew;
     }
@@ -44,6 +44,12 @@ public class CombatEngine {
 
     public void endPressed() {
         if (endTurnButton.isMouseOver()) {
+            for (Enemy enemy: enemies) {
+                if (!enemy.isDead()) {
+                    enemy.doNextTurn(player);
+                    enemy.chooseNextTurn();
+                }
+            }
             player.setEnergy(3);
             player.drawHand();
         }
@@ -72,7 +78,7 @@ public class CombatEngine {
         for (Enemy enemy : enemies) {
             if (enemy.isMouseOver()) {
                 if (playerHasEnergy()) {
-                    selectedCard.activateCard(enemy);
+                    selectedCard.activateCard(enemy, player);
                     return true;
                 }
             }

@@ -69,7 +69,7 @@ public class Card {
 
     public void activateCard(Player player) {}
 
-    public void activateCard(Enemy enemy) {}
+    public void activateCard(Enemy enemy, Player player) {}
 
     public Target getCanTarget() {
         return canTarget;

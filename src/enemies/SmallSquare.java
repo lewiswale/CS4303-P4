@@ -9,5 +9,8 @@ public class SmallSquare extends Enemy {
         health = 10;
         height = 50;
         width = 50;
+        damage = 6;
+        blockGain = 3;
+        strengthGain = 1;
     }
 }

@@ -10,7 +10,7 @@ import java.util.Random;
 
 public class Player {
     private PApplet p;
-    private int health, energy, block, strength, dex;
+    private int health, energy, block, strength, debuff;
     private ArrayList<Card> deck;
     private ArrayList<Card> hand;
     private ArrayList<Card> discarded;
@@ -138,6 +138,25 @@ public class Player {
         return health <= 0;
     }
 
+    public void takeDamage(int dmg) {
+        if (block > 0) {
+            block -= dmg;
+            if (block < 0) {
+                dmg = block * -1;
+            } else {
+                dmg = 0;
+            }
+        }
+
+        if (dmg > 0) {
+            health -= dmg;
+        }
+    }
+
+    public void getDebuffed(int n) {
+        strength -= n;
+    }
+
     public int getStrength() {
         return strength;
     }
@@ -190,6 +209,9 @@ public class Player {
         }
         if (strength > 0) {
             p.text("Strength: +" + strength + " dmg", x - rad, abilityOffset);
+            abilityOffset += 25;
+        } else if (strength < 0) {
+            p.text("Strength: " + strength + " dmg", x - rad, abilityOffset);
             abilityOffset += 25;
         }
     }
