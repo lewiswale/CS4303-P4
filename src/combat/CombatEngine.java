@@ -125,6 +125,9 @@ public class CombatEngine {
             p.line(cardMidX, cardMidY, p.mouseX, p.mouseY);
         }
 
+        p.textSize(20);
+        p.text("Cards left:\n" + player.getDeckSize(), 10, 700);
+        p.text("Discarded cards:\n" + player.getDiscardedSize(), 1400, 700);
         endTurnButton.drawEndTurn();
     }
 }

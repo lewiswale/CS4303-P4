@@ -87,6 +87,14 @@ public class Player {
         return hand;
     }
 
+    public int getDiscardedSize() {
+        return discarded.size();
+    }
+
+    public int getDeckSize() {
+        return deck.size();
+    }
+
     public boolean isMouseOverPlayer() {
         float x1 = x - p.mouseX;
         x1 *= x1;
