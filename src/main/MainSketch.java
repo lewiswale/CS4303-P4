@@ -116,10 +116,19 @@ public class MainSketch extends PApplet {
                 }
             } else if (showingPuzzle) {
                 if (pm.checkMove()) {
-                    if (pm.isWon() || pm.isLost()) {
+                    if (pm.isLost()) {
+                        player.setHealth(player.getHealth() - pm.getDifficulty()*10);
+                        if (player.isDead()) {
+                            gameOver = true;
+                        } else {
+                            showingPuzzle = false;
+                            roomSelected = false;
+                            showingMap = true;
+                        }
+                    } else if (pm.isWon()) {
+                        rew.generateRewards();
                         showingPuzzle = false;
-                        roomSelected = false;
-                        showingMap = true;
+                        showRewardScreen = true;
                     }
                 }
             } else if (showingEvent) {

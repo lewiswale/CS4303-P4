@@ -12,7 +12,7 @@ public class EventManager {
     private MainSketch p;
     private Player player;
     private Event currentEvent;
-    private final int amountOfEvents = 5;
+    private final int amountOfEvents = 7;
 
     public EventManager(MainSketch p, Player player) {
         this.p = p;
@@ -22,7 +22,7 @@ public class EventManager {
     public void makeEvent() {
         Random r = new Random();
         int n = r.nextInt(amountOfEvents);
-//        int n = 4;
+//        int n = 5;
         String event = "";
         ArrayList<EventOption> options = new ArrayList<>();
 
@@ -83,6 +83,12 @@ public class EventManager {
                 options.add(new BlankEvent(p, "Ignore him. He's crazy."));
 
                 currentEvent = new Event(p, event, options);
+                break;
+            case 5:
+                p.startFight();
+                break;
+            case 6:
+                p.startPuzzle();
                 break;
         }
     }

@@ -1,5 +1,6 @@
 package puzzles;
 
+import cards.CardSelectionScreen;
 import processing.core.PApplet;
 
 import java.util.Random;
@@ -8,22 +9,49 @@ public class PuzzleMaker {
     private PApplet p;
     private int width, height;
     private int startX, startY;
+    private int difficulty;
     private PuzzleBlock[][] puzzle;
     private int minesToFind;
     private boolean won = false;
     private boolean lost = false;
+    private CardSelectionScreen rew;
 
     public PuzzleMaker(PApplet p) {
         this.p = p;
-        this.width = 5;
-        this.height = 5;
-        this.startX = 300;
-        this.startY = 300;
-        this.minesToFind = 3;
         makePuzzle();
     }
 
+    public int getDifficulty() {
+        return difficulty;
+    }
+
     public void makePuzzle() {
+        Random r = new Random();
+        difficulty = r.nextInt(3) + 1;
+        switch (difficulty) {
+            case 1:
+                this.width = 3;
+                this.height = 3;
+                this.startX = 725;
+                this.startY = 375;
+                this.minesToFind = 1;
+                break;
+            case 2:
+                this.width = 5;
+                this.height = 5;
+                this.startX = 675;
+                this.startY = 325;
+                this.minesToFind = 3;
+                break;
+            case 3:
+                this.width = 7;
+                this.height = 7;
+                this.startX = 625;
+                this.startY = 275;
+                this.minesToFind = 5;
+                break;
+        }
+
         puzzle = new PuzzleBlock[height][width];
         int x = startX;
         int y = startY;
@@ -39,7 +67,6 @@ public class PuzzleMaker {
             x = startX;
         }
 
-        Random r = new Random();
         int xR, yR;
         int minesToPlace = minesToFind;
 
@@ -48,8 +75,10 @@ public class PuzzleMaker {
             yR = r.nextInt(height);
 
             if (!(xR == 0 && yR == 0)) {
-                puzzle[yR][xR].setMine(true);
-                minesToPlace--;
+                if (!puzzle[yR][xR].isMine()) {
+                    puzzle[yR][xR].setMine(true);
+                    minesToPlace--;
+                }
             }
         }
 
@@ -87,6 +116,23 @@ public class PuzzleMaker {
         return won;
     }
 
+    public void revealNeighbours(int x, int y) {
+        int minX = Math.max(x - 1, 0);
+        int maxX = Math.min(x + 1, width -1);
+        int minY = Math.max(y - 1, 0);
+        int maxY = Math.min(y + 1, height - 1);
+
+        for (int i = minY; i <= maxY; i++) {
+            for (int j = minX; j <= maxX; j++) {
+                if (!((x == j) && (y == i))) {
+                    if (puzzle[i][j].getClue() == 0 && puzzle[i][j].isCovered())
+                        revealNeighbours(j, i);
+                }
+                puzzle[i][j].setCovered(false);
+            }
+        }
+    }
+
     public boolean checkMove() {
         int coveredCount = 0;
         boolean uncovered = false;
@@ -100,6 +146,8 @@ public class PuzzleMaker {
                             return true;
                         } else {
                             current.setCovered(false);
+                            if (current.getClue() == 0)
+                                revealNeighbours(j, i);
                             uncovered = true;
                         }
                     }
@@ -131,5 +179,10 @@ public class PuzzleMaker {
         }
         if (pb != null)
             pb.drawBlock();
+
+        p.textSize(30);
+        p.text("Mines hidden: " + minesToFind, 100, 100);
+        p.text("Lose: -" + (difficulty*10) + " health", 100, 140);
+        p.text("Win: Get a card!", 100, 180);
     }
 }

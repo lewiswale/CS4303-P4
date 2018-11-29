@@ -36,12 +36,9 @@ public class Player {
         this.deck.add(new Attack(p));
         this.deck.add(new Block(p));
         this.deck.add(new Block(p));
-//        this.deck.add(new Block(p));
-//        this.deck.add(new Block(p));
-//        this.deck.add(new Block(p));
-        this.deck.add(new SlashAndDash(p));
-        this.deck.add(new Spook(p));
-        this.deck.add(new ShieldShatter(p));
+        this.deck.add(new Block(p));
+        this.deck.add(new Block(p));
+        this.deck.add(new Block(p));
         shuffleIntoDeck(deck);
         amountOfCards = deck.size();
         this.hand = new ArrayList<>();
