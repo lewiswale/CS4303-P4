@@ -4,14 +4,16 @@ import combat.CombatEngine;
 import map.GameMap;
 import player.Player;
 import processing.core.PApplet;
+import puzzles.PuzzleMaker;
 
 public class MainSketch extends PApplet {
     private GameMap map;
     private boolean[] keys = new boolean[128];
-    private boolean showingMap, roomSelected, fightSelected, cardClicked, showRewardScreen;
+    private boolean showingMap, roomSelected, fightSelected, cardClicked, showRewardScreen, showingPuzzle;
     private Player player;
     private CombatEngine ce;
     private CardSelectionScreen rew;
+    private PuzzleMaker pm;
 
     public void settings() {
         size(1600, 900);
@@ -20,6 +22,7 @@ public class MainSketch extends PApplet {
         player = new Player(this);
         rew = new CardSelectionScreen(this);
         ce = new CombatEngine(this, player, rew);
+        pm = new PuzzleMaker(this);
         map = new GameMap(this, player, 1);
     }
 
@@ -33,8 +36,12 @@ public class MainSketch extends PApplet {
                     ce.displayCombat();
                 else {
                     showRewardScreen = true;
-                    rew.displayRewardScreen();
+                    fightSelected = false;
                 }
+            } else if (showRewardScreen) {
+                rew.displayRewardScreen();
+            } else if (showingPuzzle) {
+                pm.drawPuzzle();
             }
         }
     }
@@ -60,22 +67,34 @@ public class MainSketch extends PApplet {
                 showingMap = false;
                 roomSelected = true;
                 fightSelected = true;
-                player.resetDeck();
+                player.reset();
                 ce = new CombatEngine(this, player, rew);
+            } else if (room.equals("Event")) {
+                showingMap = false;
+                roomSelected = true;
+                showingPuzzle = true;
+                pm.makePuzzle();
             }
         } else {
             if (fightSelected) {
-                if (!showRewardScreen) {
-                    cardClicked = ce.cardSelected();
-                    if (!cardClicked) {
-                        ce.endPressed();
-                    }
-                } else {
-                    Card cardToAdd = rew.getSelection();
-                    if (cardToAdd != null) {
-                        player.addCardToDeck(cardToAdd);
-                        showRewardScreen = false;
-                        fightSelected = false;
+                cardClicked = ce.cardSelected();
+                if (!cardClicked) {
+                    ce.endPressed();
+                }
+
+            } else if (showRewardScreen) {
+                Card cardToAdd = rew.getSelection();
+                if (cardToAdd != null) {
+                    player.addCardToDeck(cardToAdd);
+                    showRewardScreen = false;
+                    fightSelected = false;
+                    roomSelected = false;
+                    showingMap = true;
+                }
+            } else if (showingPuzzle) {
+                if (pm.checkMove()) {
+                    if (pm.isWon() || pm.isLost()) {
+                        showingPuzzle = false;
                         roomSelected = false;
                         showingMap = true;
                     }

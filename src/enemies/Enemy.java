@@ -51,17 +51,20 @@ public class Enemy {
         }
     }
 
-    public void takeDamage(int dmg) {
+    public int takeDamage(int dmg) {
         if (block > 0) {
             if (dmg > block) {
                 dmg -= block;
                 block = 0;
                 health -= dmg;
+                return dmg;
             } else {
                 block -= dmg;
+                return 0;
             }
         } else {
             health -= dmg;
+            return dmg;
         }
     }
 

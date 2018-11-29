@@ -173,7 +173,7 @@ public class Player {
         return dexterity;
     }
 
-    public void resetDeck() {
+    public void reset() {
         int size = hand.size();
         if (size > 0) {
             for (int i = 0; i < size; i++) {
@@ -192,6 +192,9 @@ public class Player {
 
         shuffleIntoDeck(deck);
         energy = 3;
+        strength = 0;
+        dexterity = 0;
+        block = 0;
     }
 
     public void addCardToDeck(Card card) {
