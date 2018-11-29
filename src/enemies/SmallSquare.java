@@ -12,7 +12,7 @@ public class SmallSquare extends Enemy {
         damage = 6;
         blockGain = 3;
         strengthGain = 1;
-        debuff = 1;
+        playerDebuff = 1;
         shape = Shape.RECTANGLE;
     }
 }

@@ -11,7 +11,7 @@ public class SharpBoy extends Enemy {
         damage = 7;
         blockGain = 5;
         strengthGain = 1;
-        debuff = 1;
+        playerDebuff = 1;
         shape = Shape.TRIANGLE;
     }
 }

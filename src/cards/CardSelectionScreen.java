@@ -8,7 +8,7 @@ import java.util.Random;
 public class CardSelectionScreen {
     PApplet p;
     ArrayList<Card> cardsToShow;
-    final int amountOfUniqueCards = 6;
+    final int amountOfUniqueCards = 9;
 
     public CardSelectionScreen(PApplet p) {
         this.p = p;
@@ -42,6 +42,15 @@ public class CardSelectionScreen {
                     break;
                 case 5:
                     toAdd = new PumpedUp(p);
+                    break;
+                case 6:
+                    toAdd = new ShieldShatter(p);
+                    break;
+                case 7:
+                    toAdd = new SlashAndDash(p);
+                    break;
+                case 8:
+                    toAdd = new Spook(p);
                     break;
             }
 

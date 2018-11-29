@@ -11,7 +11,7 @@ public class FirstFloorBoss extends Enemy {
         damage = 12;
         blockGain = 10;
         strengthGain = 5;
-        debuff = 2;
+        playerDebuff = 2;
         shape = Shape.TRIANGLE;
     }
 }

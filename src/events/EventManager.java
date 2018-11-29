@@ -1,13 +1,10 @@
 package events;
 
-import cards.Dexterity;
-import cards.Foresight;
-import cards.Strength;
+import cards.*;
 import main.MainSketch;
 import player.Player;
 import processing.core.PApplet;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -15,6 +12,7 @@ public class EventManager {
     private MainSketch p;
     private Player player;
     private Event currentEvent;
+    private final int amountOfEvents = 5;
 
     public EventManager(MainSketch p, Player player) {
         this.p = p;
@@ -23,7 +21,8 @@ public class EventManager {
 
     public void makeEvent() {
         Random r = new Random();
-        int n = r.nextInt(2);
+        int n = r.nextInt(amountOfEvents);
+//        int n = 4;
         String event = "";
         ArrayList<EventOption> options = new ArrayList<>();
 
@@ -47,6 +46,41 @@ public class EventManager {
 
                 options.add(fight);
                 options.add(puzzle);
+
+                currentEvent = new Event(p, event, options);
+                break;
+            case 2:
+                event = "A dark entity steps out of the shadows. It grins wildly, its clawed hand reaching for your pocket...";
+
+                EventOption run = new HealthEvent(p, "Attampt to flee (take 15 damage)", -15);
+
+                player.reset();
+                int i = r.nextInt(player.getDeck().size());
+                Card toRemove = player.getDeck().get(i);
+                EventOption steal = new RemoveCardEvent(p, "Stand very, VERY, still (Lose <" + toRemove.getName() + ">)", toRemove);
+
+                options.add(run);
+                options.add(steal);
+
+                currentEvent = new Event(p, event, options);
+                break;
+            case 3:
+                event = "You stumble upon a priest. He possesses the ability to heal.";
+
+                EventOption heal = new HealthEvent(p, "Let him heal you (Gain 20 health)", 20);
+                EventOption learn = new GainCardEvent(p, "Let him teach you (Gain <Leech Life>)", new LeechLife(p));
+
+                options.add(heal);
+                options.add(learn);
+
+                currentEvent = new Event(p, event, options);
+                break;
+            case 4:
+                event = "A crazed looking wizard falls out a tree and drops two rings.";
+
+                options.add(new StrengthEvent(p, "Take the red ring (Gain +1 Strength)", 1));
+                options.add(new DexterityEvent(p, "Take the blue ring (Gain +1 Dexterity)", 1));
+                options.add(new BlankEvent(p, "Ignore him. He's crazy."));
 
                 currentEvent = new Event(p, event, options);
                 break;

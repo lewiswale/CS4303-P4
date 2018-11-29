@@ -11,7 +11,7 @@ public class TallBoy extends Enemy {
         damage = 7;
         blockGain = 2;
         strengthGain = 1;
-        debuff = 0;
+        playerDebuff = 0;
         shape = Shape.RECTANGLE;
     }
 }

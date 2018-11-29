@@ -13,6 +13,7 @@ public class MainSketch extends PApplet {
     private GameMap map;
     private boolean[] keys = new boolean[128];
     private boolean showingMap, roomSelected, fightSelected, cardClicked, showRewardScreen, showingPuzzle, showingEvent;
+    private boolean gameOver = false;
     private Player player;
     private CombatEngine ce;
     private CardSelectionScreen rew;
@@ -33,23 +34,27 @@ public class MainSketch extends PApplet {
 
     public void draw() {
         background(128);
-        if (!roomSelected) {
-            map.drawMap();
-        } else {
-            if (fightSelected) {
-                if (!ce.isFinished())
-                    ce.displayCombat();
-                else {
-                    showRewardScreen = true;
-                    fightSelected = false;
+        if (!gameOver) {
+            if (!roomSelected) {
+                map.drawMap();
+            } else {
+                if (fightSelected) {
+                    if (!ce.isFinished())
+                        ce.displayCombat();
+                    else {
+                        showRewardScreen = true;
+                        fightSelected = false;
+                    }
+                } else if (showRewardScreen) {
+                    rew.displayRewardScreen();
+                } else if (showingPuzzle) {
+                    pm.drawPuzzle();
+                } else if (showingEvent) {
+                    em.displayEvent();
                 }
-            } else if (showRewardScreen) {
-                rew.displayRewardScreen();
-            } else if (showingPuzzle) {
-                pm.drawPuzzle();
-            } else if (showingEvent) {
-                em.displayEvent();
             }
+        } else {
+            text("Game over", 750, 400);
         }
     }
 
@@ -144,6 +149,10 @@ public class MainSketch extends PApplet {
         showingEvent = false;
         showingMap = false;
         pm.makePuzzle();
+    }
+
+    public void gameOver(boolean gameOver) {
+        gameOver = true;
     }
 
     public void mouseReleased() {

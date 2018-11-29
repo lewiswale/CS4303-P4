@@ -9,17 +9,17 @@ import static enemies.NextTurn.*;
 
 public class Enemy {
     PApplet p;
-    int health, strength, block, damage, blockGain, strengthGain, debuff;
+    int health, strength, block, damage, blockGain, strengthGain, playerDebuff, tempDebuff;
     float x, y;
     int width, height;
     NextTurn nextTurn;
+    String nextTurnDisplay;
     Shape shape;
 
     public Enemy(PApplet p, int x, int y) {
         this.p = p;
         this.x = x;
         this.y = y;
-        chooseNextTurn();
     }
 
     public void chooseNextTurn() {
@@ -30,22 +30,26 @@ public class Enemy {
             int n = r.nextInt(100);
 
             if (n > 90) {
-                if (debuff > 0) {
+                if (playerDebuff > 0) {
                     nextTurn = DEBUFF;
+                    nextTurnDisplay = "Weaken";
                     nextTurnChosen = true;
                 }
             } else if (n > 80) {
-                if (strengthGain > 0) {
-                    nextTurn = BUFF;
+                if (blockGain > 0) {
+                    nextTurn = BLOCK;
+                    nextTurnDisplay = "Block";
                     nextTurnChosen = true;
                 }
             } else if (n > 40) {
-                if (blockGain > 0) {
-                    nextTurn = BLOCK;
+                if (strengthGain > 0) {
+                    nextTurn = BUFF;
+                    nextTurnDisplay = "Strengthen";
                     nextTurnChosen = true;
                 }
             } else {
                 nextTurn = ATTACK;
+                nextTurnDisplay = "Attack for " + (damage + strength + tempDebuff);
                 nextTurnChosen = true;
             }
         }
@@ -54,7 +58,7 @@ public class Enemy {
     public void doNextTurn(Player player) {
         switch (nextTurn) {
             case ATTACK:
-                player.takeDamage(damage + strength);
+                player.takeDamage(damage + strength + tempDebuff);
                 break;
             case BLOCK:
                 block += blockGain;
@@ -63,7 +67,7 @@ public class Enemy {
                 strength += strengthGain;
                 break;
             case DEBUFF:
-                player.getDebuffed(debuff);
+                player.getDebuffed(playerDebuff);
         }
     }
 
@@ -116,6 +120,10 @@ public class Enemy {
         this.health = health;
     }
 
+    public void setTempDebuff(int buf) {
+        this.tempDebuff = buf;
+    }
+
     public boolean isMouseOver() {
         if (shape == Shape.RECTANGLE) {
             return p.mouseX > x && p.mouseX < x + width && p.mouseY > y && p.mouseY < y + height;
@@ -165,15 +173,15 @@ public class Enemy {
         p.textSize(20);
         float offset;
         if (shape == Shape.RECTANGLE) {
+            p.text("Next Turn:\n" + nextTurnDisplay, x, y - 35);
             p.text("Health: " + health, x, y + height + 25);
-            p.text("Next Turn:\n" + nextTurn, x, y - 35);
             offset = y + height + 50;
         } else if (shape == Shape.CIRCLE){
-            p.text("Next Turn:\n" + nextTurn, x - width/2, y - height/2 - 35);
+            p.text("Next Turn:\n" + nextTurnDisplay, x - width/2, y - height/2 - 35);
             p.text("Health: " + health, x - width/2, y + height/2 + 25);
             offset = y + height/2 + 50;
         } else {
-            p.text("Next Turn:\n" + nextTurn, x, y - height - 35);
+            p.text("Next Turn:\n" + nextTurnDisplay, x, y - height - 35);
             p.text("Health:" + health, x, y + 25);
             offset = y + 50;
         }
@@ -181,8 +189,11 @@ public class Enemy {
             p.text("Block: " + block, x, offset);
             offset += 25;
         }
-        if (strength > 0) {
-            p.text("Strength: +" + strength + " dmg", x, offset);
+        if (strength + tempDebuff > 0) {
+            p.text("Strength: +" + (strength + tempDebuff) + " dmg", x, offset);
+            offset += 25;
+        } else if (strength + tempDebuff < 0) {
+            p.text("Strength: " + (strength + tempDebuff) + " dmg", x, offset);
             offset += 25;
         }
     }

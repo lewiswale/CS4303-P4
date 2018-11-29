@@ -28,6 +28,11 @@ public class CombatEngine {
         } else {
             this.enemies.add(new FirstFloorBoss(p, 1000, 400));
         }
+
+        for (Enemy enemy : enemies) {
+            enemy.chooseNextTurn();
+        }
+
         this.endTurnButton = new EndTurnButton(p);
         this.rew = rew;
     }
@@ -35,8 +40,8 @@ public class CombatEngine {
     public ArrayList<Enemy> generateEnemies() {
         ArrayList<Enemy> enemies = new ArrayList<>();
         Random r = new Random();
-//        int n = r.nextInt(4);
-        int n = 3;
+        int n = r.nextInt(4);
+//        int n = 3;
         switch (n) {
             case 0:
                 enemies.add(new SmallSquare(p, 800, 250));
@@ -76,6 +81,7 @@ public class CombatEngine {
                 if (!enemy.isDead()) {
                     enemy.setBlock(0);
                     enemy.doNextTurn(player);
+                    enemy.setTempDebuff(0);
                     enemy.chooseNextTurn();
                 }
             }

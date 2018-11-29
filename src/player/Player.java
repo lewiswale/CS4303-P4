@@ -1,8 +1,6 @@
 package player;
 
-import cards.Attack;
-import cards.Block;
-import cards.Card;
+import cards.*;
 import processing.core.PApplet;
 
 import java.util.ArrayList;
@@ -10,7 +8,7 @@ import java.util.Random;
 
 public class Player {
     private PApplet p;
-    private int health, energy, block, strength, dexterity, tempStrength;
+    private int health, energy, block, permStr, strength, permDex, dexterity, tempStrength;
     private ArrayList<Card> deck;
     private ArrayList<Card> hand;
     private ArrayList<Card> discarded;
@@ -38,9 +36,12 @@ public class Player {
         this.deck.add(new Attack(p));
         this.deck.add(new Block(p));
         this.deck.add(new Block(p));
-        this.deck.add(new Block(p));
-        this.deck.add(new Block(p));
-        this.deck.add(new Block(p));
+//        this.deck.add(new Block(p));
+//        this.deck.add(new Block(p));
+//        this.deck.add(new Block(p));
+        this.deck.add(new SlashAndDash(p));
+        this.deck.add(new Spook(p));
+        this.deck.add(new ShieldShatter(p));
         shuffleIntoDeck(deck);
         amountOfCards = deck.size();
         this.hand = new ArrayList<>();
@@ -145,6 +146,20 @@ public class Player {
         this.tempStrength = str;
     }
 
+    public void setPermDex(int permDex) {
+        this.permDex = permDex;
+    }
+
+    public int getPermDex() {
+        return permDex;
+    }
+
+    public int getPermStr() {
+        return permStr;
+    }
+
+    public void setPermStr(int str) {this.permStr = str;}
+
     public boolean isDead() {
         return health <= 0;
     }
@@ -169,7 +184,7 @@ public class Player {
     }
 
     public int getStrength() {
-        return strength + tempStrength;
+        return strength + tempStrength + permStr;
     }
 
     public void setStrength(int strength) {
@@ -181,7 +196,7 @@ public class Player {
     }
 
     public int getDexterity() {
-        return dexterity;
+        return dexterity + permDex;
     }
 
     public void reset() {
@@ -246,18 +261,18 @@ public class Player {
             p.text("Block: " + block, x - rad, abilityOffset);
             abilityOffset += 25;
         }
-        if (strength > 0) {
-            p.text("Strength: +" + strength + " dmg", x - rad, abilityOffset);
+        if (strength + tempStrength + permStr > 0) {
+            p.text("Strength: +" + (strength + tempStrength + permStr) + " dmg", x - rad, abilityOffset);
             abilityOffset += 25;
-        } else if (strength < 0) {
-            p.text("Strength: " + strength + " dmg", x - rad, abilityOffset);
+        } else if (strength + tempStrength + permStr < 0) {
+            p.text("Strength: " + (strength + tempStrength + permStr) + " dmg", x - rad, abilityOffset);
             abilityOffset += 25;
         }
-        if (dexterity > 0) {
-            p.text("Dexterity: +" + dexterity + " blk", x - rad, abilityOffset);
+        if (dexterity + permDex > 0) {
+            p.text("Dexterity: +" + (dexterity + permDex) + " blk", x - rad, abilityOffset);
             abilityOffset += 25;
-        } else if (dexterity < 0) {
-            p.text("Dexterity: " + dexterity + " blk", x - rad, abilityOffset);
+        } else if (dexterity + permDex < 0) {
+            p.text("Dexterity: " + (dexterity + permDex) + " blk", x - rad, abilityOffset);
             abilityOffset += 25;
         }
     }

@@ -267,5 +267,8 @@ public class GameMap {
                 }
             }
         }
+
+        p.textSize(30);
+        p.text("Health: " + player.getHealth(), 100, 100);
     }
 }

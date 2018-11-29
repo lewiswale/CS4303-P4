@@ -11,7 +11,7 @@ public class Roller extends Enemy {
         damage = 10;
         blockGain = 0;
         strengthGain = 0;
-        debuff = 0;
+        playerDebuff = 0;
         shape = Shape.CIRCLE;
     }
 }
