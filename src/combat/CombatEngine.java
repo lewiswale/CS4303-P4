@@ -2,12 +2,12 @@ package combat;
 
 import cards.Card;
 import cards.CardSelectionScreen;
-import enemies.Enemy;
-import enemies.SmallSquare;
+import enemies.*;
 import player.Player;
 import processing.core.PApplet;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class CombatEngine {
     private PApplet p;
@@ -18,15 +18,43 @@ public class CombatEngine {
     private EndTurnButton endTurnButton;
     private CardSelectionScreen rew;
 
-    public CombatEngine(PApplet p, Player player, CardSelectionScreen rew) {
+    public CombatEngine(PApplet p, Player player, CardSelectionScreen rew, boolean isBoss) {
         this.p = p;
         this.player = player;
         player.drawHand();
         this.enemies = new ArrayList<>();
-        this.enemies.add(new SmallSquare(p, 800, 250));
-        this.enemies.add(new SmallSquare(p, 1300, 400));
+        if (!isBoss) {
+            this.enemies = generateEnemies();
+        } else {
+            this.enemies.add(new FirstFloorBoss(p, 1000, 400));
+        }
         this.endTurnButton = new EndTurnButton(p);
         this.rew = rew;
+    }
+
+    public ArrayList<Enemy> generateEnemies() {
+        ArrayList<Enemy> enemies = new ArrayList<>();
+        Random r = new Random();
+//        int n = r.nextInt(4);
+        int n = 3;
+        switch (n) {
+            case 0:
+                enemies.add(new SmallSquare(p, 800, 250));
+                enemies.add(new SmallSquare(p, 1100, 350));
+                return enemies;
+            case 1:
+                enemies.add(new TallBoy(p, 1000, 260));
+                return enemies;
+            case 2:
+                enemies.add(new SmallSquare(p, 800, 400));
+                enemies.add(new Roller(p, 1100, 300));
+                return enemies;
+            case 3:
+                enemies.add(new SharpBoy(p, 900, 300));
+                return enemies;
+        }
+
+        return null;
     }
 
     public boolean cardSelected() {
@@ -46,11 +74,14 @@ public class CombatEngine {
         if (endTurnButton.isMouseOver()) {
             for (Enemy enemy: enemies) {
                 if (!enemy.isDead()) {
+                    enemy.setBlock(0);
                     enemy.doNextTurn(player);
                     enemy.chooseNextTurn();
                 }
             }
             player.setEnergy(3);
+            player.setBlock(0);
+            player.setTempStrength(0);
             player.drawHand();
         }
     }
@@ -121,7 +152,11 @@ public class CombatEngine {
             if (card.getX() == selectedCard.getX()) {
                 card.setDoNotMove(false);
                 if (validTarget) {
-                    player.discard(card);
+                    if (card.isPower()) {
+                        player.addPower(card);
+                    } else {
+                        player.discard(card);
+                    }
                 }
                 selectedCard = null;
                 cardClicked = false;

@@ -9,10 +9,11 @@ import static enemies.NextTurn.*;
 
 public class Enemy {
     PApplet p;
-    int health, strength, block, damage, blockGain, strengthGain;
+    int health, strength, block, damage, blockGain, strengthGain, debuff;
     float x, y;
     int width, height;
     NextTurn nextTurn;
+    Shape shape;
 
     public Enemy(PApplet p, int x, int y) {
         this.p = p;
@@ -23,16 +24,31 @@ public class Enemy {
 
     public void chooseNextTurn() {
         Random r = new Random();
-        int n = r.nextInt(100);
+        boolean nextTurnChosen = false;
 
-        if (n > 90) {
-            nextTurn = DEBUFF;
-        } else if (n > 80) {
-            nextTurn = BUFF;
-        } else if (n > 40) {
-            nextTurn = BLOCK;
-        } else
-            nextTurn = ATTACK;
+        while (!nextTurnChosen) {
+            int n = r.nextInt(100);
+
+            if (n > 90) {
+                if (debuff > 0) {
+                    nextTurn = DEBUFF;
+                    nextTurnChosen = true;
+                }
+            } else if (n > 80) {
+                if (strengthGain > 0) {
+                    nextTurn = BUFF;
+                    nextTurnChosen = true;
+                }
+            } else if (n > 40) {
+                if (blockGain > 0) {
+                    nextTurn = BLOCK;
+                    nextTurnChosen = true;
+                }
+            } else {
+                nextTurn = ATTACK;
+                nextTurnChosen = true;
+            }
+        }
     }
 
     public void doNextTurn(Player player) {
@@ -47,7 +63,7 @@ public class Enemy {
                 strength += strengthGain;
                 break;
             case DEBUFF:
-                player.getDebuffed(1);
+                player.getDebuffed(debuff);
         }
     }
 
@@ -101,7 +117,31 @@ public class Enemy {
     }
 
     public boolean isMouseOver() {
-        return p.mouseX > x && p.mouseX < x + width && p.mouseY > y && p.mouseY < y + height;
+        if (shape == Shape.RECTANGLE) {
+            return p.mouseX > x && p.mouseX < x + width && p.mouseY > y && p.mouseY < y + height;
+        } else if (shape == Shape.CIRCLE) {
+            float x1 = x - p.mouseX;
+            x1 *= x1;
+            float y1 = y - p.mouseY;
+            y1 *= y1;
+
+            return width * width >= x1 + y1;
+        } else if (shape == Shape.TRIANGLE) {
+            float x1 = x;
+            float y1 = y;
+            float x2 = x + width;
+            float y2 = y;
+            float x3 = x + width/2;
+            float y3 = y - height;
+
+            float origArea = Math.abs((x2-x1)*(y3-y1) - (x3-x1)*(y2-y1));
+            float area1 = Math.abs( (x1-p.mouseX)*(y2-p.mouseY) - (x2-p.mouseX)*(y1-p.mouseY) );
+            float area2 = Math.abs( (x2-p.mouseX)*(y3-p.mouseY) - (x3-p.mouseX)*(y2-p.mouseY) );
+            float area3 = Math.abs( (x3-p.mouseX)*(y1-p.mouseY) - (x1-p.mouseX)*(y3-p.mouseY) );
+
+            return area1 + area2 + area3 == origArea;
+        } else
+            return false;
     }
 
     public boolean isDead() {
@@ -113,13 +153,30 @@ public class Enemy {
         if (isMouseOver()) {
             p.stroke(255, 255, 0);
         }
-        p.rect(x, y, width, height);
+        if (shape == Shape.RECTANGLE) {
+            p.rect(x, y, width, height);
+        } else if (shape == Shape.TRIANGLE) {
+            p.triangle(x, y, x + width, y, x + width/2, y - height);
+        } else if (shape == Shape.CIRCLE) {
+            p.ellipse(x, y, width, height);
+        }
         p.fill(0);
         p.stroke(0);
         p.textSize(20);
-        p.text("Health: " + health, x, y + height + 25);
-        p.text("Next Turn:\n" + nextTurn, x, y - 35);
-        float offset = y + height + 50;
+        float offset;
+        if (shape == Shape.RECTANGLE) {
+            p.text("Health: " + health, x, y + height + 25);
+            p.text("Next Turn:\n" + nextTurn, x, y - 35);
+            offset = y + height + 50;
+        } else if (shape == Shape.CIRCLE){
+            p.text("Next Turn:\n" + nextTurn, x - width/2, y - height/2 - 35);
+            p.text("Health: " + health, x - width/2, y + height/2 + 25);
+            offset = y + height/2 + 50;
+        } else {
+            p.text("Next Turn:\n" + nextTurn, x, y - height - 35);
+            p.text("Health:" + health, x, y + 25);
+            offset = y + 50;
+        }
         if (block > 0) {
             p.text("Block: " + block, x, offset);
             offset += 25;

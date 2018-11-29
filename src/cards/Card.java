@@ -17,6 +17,7 @@ public class Card {
     final int CARD_HEIGHT = 300;
     boolean mouseIsOver = false;
     boolean doNotMove = false;
+    boolean isPower = false;
     int x, y;
     Target canTarget;
 
@@ -57,6 +58,10 @@ public class Card {
         return cost;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public boolean isDoNotMove() {
         return doNotMove;
     }
@@ -74,6 +79,10 @@ public class Card {
     public void activateCard(Enemy enemy, Player player) {}
 
     public void activateCard(ArrayList<Enemy> enemies, Player player) {}
+
+    public boolean isPower() {
+        return isPower;
+    }
 
     public Target getCanTarget() {
         return canTarget;

@@ -60,48 +60,48 @@ public class GameMap {
 
             toInspect.remove(0);
 
-            String roomName = "Event";
+//            String roomName = "Event";
 
             for (int i = 0; i < childCount; i++) {
                 Room newChild;
                 switch (room.getBranch()) {
                     case 0:
                         if (childCount == 2) {
-                            newChild = new Room(p, roomName, (room.getX() + i * 200), room.getY() + 80, i);
+                            newChild = new Room(p, generateRoom(), (room.getX() + i * 200), room.getY() + 80, i);
                         } else {
                             int coinFlip = r.nextInt(2);
                             if (coinFlip == 0) {
-                                newChild = new Room(p, roomName, room.getX(), room.getY() + 80, 0);
+                                newChild = new Room(p, generateRoom(), room.getX(), room.getY() + 80, 0);
                             } else {
-                                newChild = new Room(p, roomName, (room.getX() + 200), room.getY() + 80, 1);
+                                newChild = new Room(p, generateRoom(), (room.getX() + 200), room.getY() + 80, 1);
                             }
                         }
                         break;
                     case 1:
                         if (childCount == 3) {
-                            newChild = new Room(p,roomName, ((room.getX() - 200) + i*200), room.getY()+80, i);
+                            newChild = new Room(p,generateRoom(), ((room.getX() - 200) + i*200), room.getY()+80, i);
                         } else if (childCount == 2){
                             int coinFlip = r.nextInt(2);
 
                             if (coinFlip == 0) {
-                                newChild = new Room(p,roomName, ((room.getX() - 200) + i*200), room.getY()+80, i);
+                                newChild = new Room(p,generateRoom(), ((room.getX() - 200) + i*200), room.getY()+80, i);
                             } else {
-                                newChild = new Room(p,roomName, (room.getX() + i*200), room.getY()+80, i+1);
+                                newChild = new Room(p,generateRoom(), (room.getX() + i*200), room.getY()+80, i+1);
                             }
                         } else {
-                            newChild = new Room(p, roomName, room.getX(), room.getY()+80, 1);
+                            newChild = new Room(p, generateRoom(), room.getX(), room.getY()+80, 1);
                         }
                         break;
                     case 2:
                         if (childCount == 2) {
-                            newChild = new Room(p,roomName, ((room.getX() - 200) + i*200), room.getY()+80, i+1);
+                            newChild = new Room(p,generateRoom(), ((room.getX() - 200) + i*200), room.getY()+80, i+1);
                         } else {
                             int coinFlip = r.nextInt(2);
 
                             if (coinFlip == 0) {
-                                newChild = new Room(p, roomName, room.getX(), room.getY() + 80, 2);
+                                newChild = new Room(p, generateRoom(), room.getX(), room.getY() + 80, 2);
                             } else {
-                                newChild = new Room(p, roomName, room.getX() - 200, room.getY() + 80, 1);
+                                newChild = new Room(p, generateRoom(), room.getX() - 200, room.getY() + 80, 1);
                             }
                         }
                         break;
@@ -122,6 +122,19 @@ public class GameMap {
             }
 
             buildMap(toInspect.get(0));
+        }
+    }
+
+    public String generateRoom() {
+        Random r = new Random();
+        int n = r.nextInt(100);
+
+        if (n > 80) {
+            return "Puzzle";
+        } else if (n > 60) {
+            return "Event";
+        } else {
+            return "Fight";
         }
     }
 
@@ -224,7 +237,7 @@ public class GameMap {
                     p.noFill();
                     p.stroke(0, 255, 0);
                     p.strokeWeight(5);
-                    p.rect(currentRoom.getX(), (currentRoom.getY() - currentRoom.getHEIGHT()) + 3, currentRoom.getWIDTH(),
+                    p.rect(currentRoom.getX() - 10, (currentRoom.getY() - currentRoom.getHEIGHT()) + 3, currentRoom.getWIDTH() + 35,
                             currentRoom.getHEIGHT() + 5);
                     p.fill(0);
                     p.stroke(0);
@@ -235,7 +248,7 @@ public class GameMap {
                     p.noFill();
                     p.stroke(0, 255, 0);
                     p.strokeWeight(5);
-                    p.rect(nextRooms.get(j).getX(), (nextRooms.get(j).getY() - nextRooms.get(j).getHEIGHT()) + 3, nextRooms.get(j).getWIDTH(),
+                    p.rect(nextRooms.get(j).getX() - 10, (nextRooms.get(j).getY() - nextRooms.get(j).getHEIGHT()) + 3, nextRooms.get(j).getWIDTH() + 35,
                             nextRooms.get(j).getHEIGHT() + 5);
                     p.fill(0);
                     p.stroke(0);

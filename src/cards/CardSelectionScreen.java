@@ -8,6 +8,7 @@ import java.util.Random;
 public class CardSelectionScreen {
     PApplet p;
     ArrayList<Card> cardsToShow;
+    final int amountOfUniqueCards = 6;
 
     public CardSelectionScreen(PApplet p) {
         this.p = p;
@@ -16,32 +17,37 @@ public class CardSelectionScreen {
 
     public void generateRewards() {
         cardsToShow = new ArrayList<>();
-        ArrayList<Integer> chosen = new ArrayList<>();
+        ArrayList<String> names = new ArrayList<>();
         Random r = new Random();
 
-        for (int i = 0; i < 3; i++) {
-            int n = -1;
-            while (!chosen.contains(n)) {
-                n = r.nextInt(5);
-                if (!chosen.contains(n))
-                    chosen.add(n);
-            }
+        while (cardsToShow.size() < 3) {
+            int n = r.nextInt(amountOfUniqueCards);
+            Card toAdd = null;
+
             switch (n) {
                 case 0:
-                    cardsToShow.add(new Strength(p));
+                    toAdd = new Strength(p);
                     break;
                 case 1:
-                    cardsToShow.add(new Dexterity(p));
+                    toAdd = new Dexterity(p);
                     break;
                 case 2:
-                    cardsToShow.add(new Foresight(p));
+                    toAdd = new Whirlwind(p);
                     break;
                 case 3:
-                    cardsToShow.add(new Whirlwind(p));
+                    toAdd = new LeechLife(p);
                     break;
                 case 4:
-                    cardsToShow.add(new LeechLife(p));
+                    toAdd = new Foresight(p);
                     break;
+                case 5:
+                    toAdd = new PumpedUp(p);
+                    break;
+            }
+
+            if (!names.contains(toAdd.getName())) {
+                names.add(toAdd.getName());
+                cardsToShow.add(toAdd);
             }
         }
     }

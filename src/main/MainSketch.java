@@ -1,7 +1,8 @@
+package main;
+
 import cards.Card;
 import cards.CardSelectionScreen;
 import combat.CombatEngine;
-import events.Event;
 import events.EventManager;
 import map.GameMap;
 import player.Player;
@@ -24,9 +25,9 @@ public class MainSketch extends PApplet {
         roomSelected = false;
         player = new Player(this);
         rew = new CardSelectionScreen(this);
-        ce = new CombatEngine(this, player, rew);
+        ce = new CombatEngine(this, player, rew, false);
         pm = new PuzzleMaker(this);
-        em = new EventManager(this);
+        em = new EventManager(this, player);
         map = new GameMap(this, player, 1);
     }
 
@@ -74,7 +75,7 @@ public class MainSketch extends PApplet {
                 roomSelected = true;
                 fightSelected = true;
                 player.reset();
-                ce = new CombatEngine(this, player, rew);
+                ce = new CombatEngine(this, player, rew, false);
             } else if (room.equals("Puzzle")) {
                 showingMap = false;
                 roomSelected = true;
@@ -85,6 +86,12 @@ public class MainSketch extends PApplet {
                 roomSelected = true;
                 showingEvent = true;
                 em.makeEvent();
+            } else if (room.equals("Boss")) {
+                showingMap = false;
+                roomSelected = true;
+                fightSelected = true;
+                player.reset();
+                ce = new CombatEngine(this, player, rew, true);
             }
         } else {
             if (fightSelected) {
@@ -110,8 +117,33 @@ public class MainSketch extends PApplet {
                         showingMap = true;
                     }
                 }
+            } else if (showingEvent) {
+                if (em.checkSelection()) {
+                    showingEvent = false;
+                    if (!fightSelected && !showingPuzzle) {
+                        roomSelected = false;
+                        showingMap = true;
+                    }
+                }
             }
         }
+    }
+
+    public void startFight() {
+        roomSelected = true;
+        fightSelected = true;
+        showingMap = false;
+        showingEvent = false;
+        player.reset();
+        ce = new CombatEngine(this, player, rew, false);
+    }
+
+    public void startPuzzle() {
+        roomSelected = true;
+        showingPuzzle = true;
+        showingEvent = false;
+        showingMap = false;
+        pm.makePuzzle();
     }
 
     public void mouseReleased() {
@@ -124,7 +156,7 @@ public class MainSketch extends PApplet {
     }
 
     public static void main(String[] args) {
-        String[] pArgs = new String[] {"MainSketch"};
+        String[] pArgs = new String[] {"main.MainSketch"};
         MainSketch mainSketch = new MainSketch();
         PApplet.runSketch(pArgs, mainSketch);
     }

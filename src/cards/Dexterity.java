@@ -9,9 +9,10 @@ public class Dexterity extends Card {
     public Dexterity(PApplet p) {
         super(p);
         this.name = "Dexterity";
-        this.flavourText = "Gain 2 dexterity";
+        this.flavourText = "POWER\nGain 2 dexterity\nfor the rest of this\ncombat";
         this.cost = 2;
         this.canTarget = Target.PLAYER;
+        this.isPower = true;
         this.dex = 2;
     }
 

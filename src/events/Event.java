@@ -1,18 +1,23 @@
 package events;
 
+import main.MainSketch;
 import processing.core.PApplet;
 
 import java.util.ArrayList;
 
 public class Event {
-    private PApplet p;
+    private MainSketch p;
     private String eventText;
     private ArrayList<EventOption> options;
 
-    public Event(PApplet p, String eventText, ArrayList<EventOption> options) {
+    public Event(MainSketch p, String eventText, ArrayList<EventOption> options) {
         this.p = p;
         this.eventText = eventText;
         this.options = options;
+    }
+
+    public ArrayList<EventOption> getOptions() {
+        return options;
     }
 
     public void displayEvent() {

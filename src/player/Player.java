@@ -10,10 +10,11 @@ import java.util.Random;
 
 public class Player {
     private PApplet p;
-    private int health, energy, block, strength, dexterity;
+    private int health, energy, block, strength, dexterity, tempStrength;
     private ArrayList<Card> deck;
     private ArrayList<Card> hand;
     private ArrayList<Card> discarded;
+    private ArrayList<Card> powers;
     private int cardsDrawn = 0;
     private int amountOfCards;
     private float x, y;
@@ -44,6 +45,7 @@ public class Player {
         amountOfCards = deck.size();
         this.hand = new ArrayList<>();
         this.discarded = new ArrayList<>();
+        this.powers = new ArrayList<>();
     }
 
     public ArrayList<Card> getDeck() {
@@ -82,6 +84,11 @@ public class Player {
                 deck.remove(0);
             }
         }
+    }
+
+    public void addPower(Card card) {
+        powers.add(card);
+        hand.remove(card);
     }
 
     public ArrayList<Card> getHand() {
@@ -134,6 +141,10 @@ public class Player {
         this.block = block;
     }
 
+    public void setTempStrength(int str) {
+        this.tempStrength = str;
+    }
+
     public boolean isDead() {
         return health <= 0;
     }
@@ -158,7 +169,7 @@ public class Player {
     }
 
     public int getStrength() {
-        return strength;
+        return strength + tempStrength;
     }
 
     public void setStrength(int strength) {
@@ -190,9 +201,18 @@ public class Player {
             }
         }
 
+        size = powers.size();
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
+                deck.add(powers.get(0));
+                powers.remove(0);
+            }
+        }
+
         shuffleIntoDeck(deck);
         energy = 3;
         strength = 0;
+        tempStrength = 0;
         dexterity = 0;
         block = 0;
     }

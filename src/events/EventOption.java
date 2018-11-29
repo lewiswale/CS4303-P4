@@ -1,13 +1,15 @@
 package events;
 
+import main.MainSketch;
+import player.Player;
 import processing.core.PApplet;
 
 public class EventOption {
-    private PApplet p;
-    private String option;
-    private int x, y, width, height;
+    MainSketch p;
+    String option;
+    int x, y, width, height;
 
-    public EventOption(PApplet p, String option) {
+    public EventOption(MainSketch p, String option) {
         this.p = p;
         this.option = option;
         this.width = option.length() * 15;
@@ -22,6 +24,8 @@ public class EventOption {
     public boolean isMouseOver() {
         return p.mouseX > x && p.mouseX < x + width && p.mouseY > y && p.mouseY < y + height;
     }
+
+    public void activateOption(Player player) {}
 
     public void drawOption() {
         p.fill(100);

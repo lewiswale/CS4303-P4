@@ -10,9 +10,10 @@ public class Strength extends Card {
     public Strength(PApplet p) {
         super(p);
         this.name = "Strength";
-        this.flavourText = "Gain 2 strength";
+        this.flavourText = "POWER\nGain 2 strength\nfor the rest of this\ncombat";
         this.canTarget = Target.PLAYER;
         this.cost = 2;
+        this.isPower = true;
         this.strength = 2;
     }
 
