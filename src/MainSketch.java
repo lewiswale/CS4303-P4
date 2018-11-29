@@ -1,6 +1,8 @@
 import cards.Card;
 import cards.CardSelectionScreen;
 import combat.CombatEngine;
+import events.Event;
+import events.EventManager;
 import map.GameMap;
 import player.Player;
 import processing.core.PApplet;
@@ -9,11 +11,12 @@ import puzzles.PuzzleMaker;
 public class MainSketch extends PApplet {
     private GameMap map;
     private boolean[] keys = new boolean[128];
-    private boolean showingMap, roomSelected, fightSelected, cardClicked, showRewardScreen, showingPuzzle;
+    private boolean showingMap, roomSelected, fightSelected, cardClicked, showRewardScreen, showingPuzzle, showingEvent;
     private Player player;
     private CombatEngine ce;
     private CardSelectionScreen rew;
     private PuzzleMaker pm;
+    private EventManager em;
 
     public void settings() {
         size(1600, 900);
@@ -23,6 +26,7 @@ public class MainSketch extends PApplet {
         rew = new CardSelectionScreen(this);
         ce = new CombatEngine(this, player, rew);
         pm = new PuzzleMaker(this);
+        em = new EventManager(this);
         map = new GameMap(this, player, 1);
     }
 
@@ -42,6 +46,8 @@ public class MainSketch extends PApplet {
                 rew.displayRewardScreen();
             } else if (showingPuzzle) {
                 pm.drawPuzzle();
+            } else if (showingEvent) {
+                em.displayEvent();
             }
         }
     }
@@ -69,11 +75,16 @@ public class MainSketch extends PApplet {
                 fightSelected = true;
                 player.reset();
                 ce = new CombatEngine(this, player, rew);
-            } else if (room.equals("Event")) {
+            } else if (room.equals("Puzzle")) {
                 showingMap = false;
                 roomSelected = true;
                 showingPuzzle = true;
                 pm.makePuzzle();
+            } else if (room.equals("Event")) {
+                showingMap = false;
+                roomSelected = true;
+                showingEvent = true;
+                em.makeEvent();
             }
         } else {
             if (fightSelected) {
