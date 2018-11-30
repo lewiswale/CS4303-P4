@@ -8,11 +8,13 @@ import java.util.Random;
 public class CardSelectionScreen {
     PApplet p;
     ArrayList<Card> cardsToShow;
-    final int amountOfUniqueCards = 9;
+    final int amountOfUniqueCards = 13;
+    SkipButton skip;
 
     public CardSelectionScreen(PApplet p) {
         this.p = p;
         this.cardsToShow = new ArrayList<>();
+        this.skip = new SkipButton(p);
     }
 
     public void generateRewards() {
@@ -52,6 +54,18 @@ public class CardSelectionScreen {
                 case 8:
                     toAdd = new Spook(p);
                     break;
+                case 9:
+                    toAdd = new DragonDance(p);
+                    break;
+                case 10:
+                    toAdd = new Rampage(p);
+                    break;
+                case 11:
+                    toAdd = new ShieldSlam(p);
+                    break;
+                case 12:
+                    toAdd = new SteelPlating(p);
+                    break;
             }
 
             if (!names.contains(toAdd.getName())) {
@@ -70,6 +84,10 @@ public class CardSelectionScreen {
         return null;
     }
 
+    public boolean pressedSkip() {
+        return skip.isMouseOver();
+    }
+
     public void displayRewardScreen() {
         int x = 300;
         int y = 300;
@@ -85,5 +103,7 @@ public class CardSelectionScreen {
             }
             x += 400;
         }
+
+        skip.drawSkipButton();
     }
 }

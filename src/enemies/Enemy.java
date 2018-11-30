@@ -41,6 +41,12 @@ public class Enemy {
                     nextTurnDisplay = "Block";
                     nextTurnChosen = true;
                 }
+            } else if (n > 60) {
+                if (blockGain > 0) {
+                    nextTurn = ATTACK_AND_BLOCK;
+                    nextTurnDisplay = "ATK & BLK";
+                    nextTurnChosen = true;
+                }
             } else if (n > 40) {
                 if (strengthGain > 0) {
                     nextTurn = BUFF;
@@ -68,6 +74,11 @@ public class Enemy {
                 break;
             case DEBUFF:
                 player.getDebuffed(playerDebuff);
+                break;
+            case ATTACK_AND_BLOCK:
+                player.takeDamage(damage + strength + tempDebuff);
+                block += blockGain;
+                break;
         }
     }
 
@@ -171,30 +182,32 @@ public class Enemy {
         p.fill(0);
         p.stroke(0);
         p.textSize(20);
-        float offset;
+        float yOffset;
+        float xOffset = x;
         if (shape == Shape.RECTANGLE) {
             p.text("Next Turn:\n" + nextTurnDisplay, x, y - 35);
             p.text("Health: " + health, x, y + height + 25);
-            offset = y + height + 50;
+            yOffset = y + height + 50;
         } else if (shape == Shape.CIRCLE){
             p.text("Next Turn:\n" + nextTurnDisplay, x - width/2, y - height/2 - 35);
             p.text("Health: " + health, x - width/2, y + height/2 + 25);
-            offset = y + height/2 + 50;
+            yOffset = y + height/2 + 50;
+            xOffset = x - width/2;
         } else {
             p.text("Next Turn:\n" + nextTurnDisplay, x, y - height - 35);
             p.text("Health:" + health, x, y + 25);
-            offset = y + 50;
+            yOffset = y + 50;
         }
         if (block > 0) {
-            p.text("Block: " + block, x, offset);
-            offset += 25;
+            p.text("Block: " + block, xOffset, yOffset);
+            yOffset += 25;
         }
         if (strength + tempDebuff > 0) {
-            p.text("Strength: +" + (strength + tempDebuff) + " dmg", x, offset);
-            offset += 25;
+            p.text("Strength: +" + (strength + tempDebuff) + " dmg", xOffset, yOffset);
+            yOffset += 25;
         } else if (strength + tempDebuff < 0) {
-            p.text("Strength: " + (strength + tempDebuff) + " dmg", x, offset);
-            offset += 25;
+            p.text("Strength: " + (strength + tempDebuff) + " dmg", xOffset, yOffset);
+            yOffset += 25;
         }
     }
 }

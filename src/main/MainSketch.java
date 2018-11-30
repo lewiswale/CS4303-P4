@@ -19,22 +19,25 @@ public class MainSketch extends PApplet {
     private CardSelectionScreen rew;
     private PuzzleMaker pm;
     private EventManager em;
+    private int floorNumber;
+    private boolean gameWon = false;
 
     public void settings() {
         size(1600, 900);
         showingMap = true;
         roomSelected = false;
+        floorNumber = 1;
         player = new Player(this);
         rew = new CardSelectionScreen(this);
-        ce = new CombatEngine(this, player, rew, false);
+        ce = new CombatEngine(this, player, rew, false, floorNumber);
         pm = new PuzzleMaker(this);
         em = new EventManager(this, player);
-        map = new GameMap(this, player, 1);
+        map = new GameMap(this, player, floorNumber);
     }
 
     public void draw() {
         background(128);
-        if (!gameOver) {
+        if (!gameOver && !gameWon) {
             if (!roomSelected) {
                 map.drawMap();
             } else {
@@ -42,8 +45,20 @@ public class MainSketch extends PApplet {
                     if (!ce.isFinished())
                         ce.displayCombat();
                     else {
-                        showRewardScreen = true;
-                        fightSelected = false;
+                        if (player.isDead()) {
+                            gameOver = true;
+                        } else {
+                            if (ce.isBoss()) {
+                                floorNumber++;
+                                if (floorNumber == 4) {
+                                    gameWon = true;
+                                } else {
+                                    map = new GameMap(this, player, floorNumber);
+                                }
+                            }
+                            showRewardScreen = true;
+                            fightSelected = false;
+                        }
                     }
                 } else if (showRewardScreen) {
                     rew.displayRewardScreen();
@@ -53,8 +68,14 @@ public class MainSketch extends PApplet {
                     em.displayEvent();
                 }
             }
+        } else if (gameOver) {
+            fill(255, 0, 0);
+            textSize(50);
+            text("Game over", 700, 400);
         } else {
-            text("Game over", 750, 400);
+            fill(0, 255, 0);
+            textSize(50);
+            text("You won!", 700, 400);
         }
     }
 
@@ -64,7 +85,7 @@ public class MainSketch extends PApplet {
             showingMap = true;
             roomSelected = false;
             fightSelected = false;
-            map = new GameMap(this, player, 1);
+            map = new GameMap(this, player, floorNumber);
         }
     }
 
@@ -80,7 +101,7 @@ public class MainSketch extends PApplet {
                 roomSelected = true;
                 fightSelected = true;
                 player.reset();
-                ce = new CombatEngine(this, player, rew, false);
+                ce = new CombatEngine(this, player, rew, false, floorNumber);
             } else if (room.equals("Puzzle")) {
                 showingMap = false;
                 roomSelected = true;
@@ -96,7 +117,7 @@ public class MainSketch extends PApplet {
                 roomSelected = true;
                 fightSelected = true;
                 player.reset();
-                ce = new CombatEngine(this, player, rew, true);
+                ce = new CombatEngine(this, player, rew, true, floorNumber);
             }
         } else {
             if (fightSelected) {
@@ -109,6 +130,11 @@ public class MainSketch extends PApplet {
                 Card cardToAdd = rew.getSelection();
                 if (cardToAdd != null) {
                     player.addCardToDeck(cardToAdd);
+                    showRewardScreen = false;
+                    fightSelected = false;
+                    roomSelected = false;
+                    showingMap = true;
+                } else if (rew.pressedSkip()) {
                     showRewardScreen = false;
                     fightSelected = false;
                     roomSelected = false;
@@ -149,7 +175,7 @@ public class MainSketch extends PApplet {
         showingMap = false;
         showingEvent = false;
         player.reset();
-        ce = new CombatEngine(this, player, rew, false);
+        ce = new CombatEngine(this, player, rew, false, floorNumber);
     }
 
     public void startPuzzle() {
@@ -161,7 +187,7 @@ public class MainSketch extends PApplet {
     }
 
     public void gameOver(boolean gameOver) {
-        gameOver = true;
+        this.gameOver = gameOver;
     }
 
     public void mouseReleased() {

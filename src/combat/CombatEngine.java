@@ -17,16 +17,30 @@ public class CombatEngine {
     private Card selectedCard;
     private EndTurnButton endTurnButton;
     private CardSelectionScreen rew;
+    private int floorNumber;
+    private boolean isBoss;
 
-    public CombatEngine(PApplet p, Player player, CardSelectionScreen rew, boolean isBoss) {
+    public CombatEngine(PApplet p, Player player, CardSelectionScreen rew, boolean isBoss, int floorNumber) {
         this.p = p;
         this.player = player;
+        this.floorNumber = floorNumber;
+        this.isBoss = isBoss;
         player.drawHand();
         this.enemies = new ArrayList<>();
         if (!isBoss) {
             this.enemies = generateEnemies();
         } else {
-            this.enemies.add(new FirstFloorBoss(p, 1000, 400));
+            switch (floorNumber) {
+                case 1:
+                    this.enemies.add(new FirstFloorBoss(p, 1000, 400));
+                    break;
+                case 2:
+                    this.enemies.add(new SecondFloorBoss(p, 1000, 200));
+                    break;
+                case 3:
+                    this.enemies.add(new ThirdFloorBoss(p, 1000, 300));
+                    break;
+            }
         }
 
         for (Enemy enemy : enemies) {
@@ -46,20 +60,42 @@ public class CombatEngine {
             case 0:
                 enemies.add(new SmallSquare(p, 800, 250));
                 enemies.add(new SmallSquare(p, 1100, 350));
+                if (floorNumber > 1) {
+                    enemies.add(new SmallSquare(p, 1300, 300));
+                }
+                if (floorNumber > 2) {
+                    enemies.add(new TallBoy(p, 900, 250));
+                }
                 return enemies;
             case 1:
                 enemies.add(new TallBoy(p, 1000, 260));
+                if (floorNumber > 1) {
+                    enemies.add(new SharpBoy(p, 1300, 250));
+                }
                 return enemies;
             case 2:
                 enemies.add(new SmallSquare(p, 800, 400));
                 enemies.add(new Roller(p, 1100, 300));
+                if (floorNumber > 2) {
+                    enemies.add(new Roller(p, 1300, 350));
+                }
                 return enemies;
             case 3:
                 enemies.add(new SharpBoy(p, 900, 300));
+                if (floorNumber > 1) {
+                    enemies.add(new TallBoy(p, 1100, 350));
+                }
+                if (floorNumber > 2) {
+                    enemies.add(new Roller(p, 1300, 320));
+                }
                 return enemies;
         }
 
         return null;
+    }
+
+    public boolean isBoss() {
+        return isBoss;
     }
 
     public boolean cardSelected() {

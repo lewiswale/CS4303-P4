@@ -269,6 +269,8 @@ public class GameMap {
         }
 
         p.textSize(30);
-        p.text("Health: " + player.getHealth(), 100, 100);
+        p.text("Floor " + floorNumber, 100, 100);
+        p.text("Health: " + player.getHealth(), 100, 140);
+
     }
 }

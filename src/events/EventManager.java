@@ -21,8 +21,8 @@ public class EventManager {
 
     public void makeEvent() {
         Random r = new Random();
-        int n = r.nextInt(amountOfEvents);
-//        int n = 5;
+//        int n = r.nextInt(amountOfEvents);
+        int n = 2;
         String event = "";
         ArrayList<EventOption> options = new ArrayList<>();
 
@@ -52,7 +52,7 @@ public class EventManager {
             case 2:
                 event = "A dark entity steps out of the shadows. It grins wildly, its clawed hand reaching for your pocket...";
 
-                EventOption run = new HealthEvent(p, "Attampt to flee (take 15 damage)", -15);
+                EventOption run = new HealthEvent(p, "Attempt to flee (take 15 damage)", -15);
 
                 player.reset();
                 int i = r.nextInt(player.getDeck().size());
