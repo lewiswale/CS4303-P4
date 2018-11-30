@@ -14,10 +14,10 @@ public class PuzzleMaker {
     private int minesToFind;
     private boolean won = false;
     private boolean lost = false;
-    private CardSelectionScreen rew;
 
-    public PuzzleMaker(PApplet p) {
+    public PuzzleMaker(PApplet p, int difficulty) {
         this.p = p;
+        this.difficulty = difficulty;
         makePuzzle();
     }
 
@@ -26,8 +26,9 @@ public class PuzzleMaker {
     }
 
     public void makePuzzle() {
+        won = false;
+        lost = false;
         Random r = new Random();
-        difficulty = r.nextInt(3) + 1;
         switch (difficulty) {
             case 1:
                 this.width = 3;

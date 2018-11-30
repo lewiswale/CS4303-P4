@@ -30,7 +30,7 @@ public class MainSketch extends PApplet {
         player = new Player(this);
         rew = new CardSelectionScreen(this);
         ce = new CombatEngine(this, player, rew, false, floorNumber);
-        pm = new PuzzleMaker(this);
+        pm = new PuzzleMaker(this, floorNumber);
         em = new EventManager(this, player);
         map = new GameMap(this, player, floorNumber);
     }
@@ -54,6 +54,10 @@ public class MainSketch extends PApplet {
                                     gameWon = true;
                                 } else {
                                     map = new GameMap(this, player, floorNumber);
+                                    pm = new PuzzleMaker(this, floorNumber);
+                                    if (player.getHealth() < 100) {
+                                        player.setHealth(100);
+                                    }
                                 }
                             }
                             showRewardScreen = true;

@@ -60,8 +60,6 @@ public class GameMap {
 
             toInspect.remove(0);
 
-//            String roomName = "Event";
-
             for (int i = 0; i < childCount; i++) {
                 Room newChild;
                 switch (room.getBranch()) {
